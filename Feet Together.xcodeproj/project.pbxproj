@@ -16,6 +16,14 @@
 		93F5F2682C8D55820031C0B0 /* Feet_TogetherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2672C8D55820031C0B0 /* Feet_TogetherTests.swift */; };
 		93F5F2722C8D55820031C0B0 /* Feet_TogetherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2712C8D55820031C0B0 /* Feet_TogetherUITests.swift */; };
 		93F5F2742C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2732C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift */; };
+		93F5F2812C8D57E80031C0B0 /* TrainingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */; };
+		93F5F2832C8D58100031C0B0 /* Techniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2822C8D58100031C0B0 /* Techniques.swift */; };
+		93F5F2852C8D584B0031C0B0 /* TrainingSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */; };
+		93F5F2872C8D58750031C0B0 /* StartTrainingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */; };
+		93F5F2892C8D589B0031C0B0 /* iPhoneSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */; };
+		93F5F28B2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F28A2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift */; };
+		93F5F28D2C8D58EB0031C0B0 /* EditSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */; };
+		93F5F28F2C8D591E0031C0B0 /* TechniquesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +57,14 @@
 		93F5F26D2C8D55820031C0B0 /* Feet TogetherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Feet TogetherUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F5F2712C8D55820031C0B0 /* Feet_TogetherUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherUITests.swift; sourceTree = "<group>"; };
 		93F5F2732C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingSession.swift; sourceTree = "<group>"; };
+		93F5F2822C8D58100031C0B0 /* Techniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Techniques.swift; sourceTree = "<group>"; };
+		93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingSessionsView.swift; sourceTree = "<group>"; };
+		93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTrainingView.swift; sourceTree = "<group>"; };
+		93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSessionManager.swift; sourceTree = "<group>"; };
+		93F5F28A2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTrainingSessionsView.swift; sourceTree = "<group>"; };
+		93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSessionView.swift; sourceTree = "<group>"; };
+		93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniquesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,10 +115,18 @@
 		93F5F24F2C8D55810031C0B0 /* Feet Together */ = {
 			isa = PBXGroup;
 			children = (
+				93F5F28A2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift */,
 				93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */,
 				93F5F2522C8D55810031C0B0 /* Persistence.swift */,
 				93F5F2572C8D55810031C0B0 /* ContentView.swift */,
+				93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */,
+				93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */,
+				93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */,
+				93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */,
+				93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */,
+				93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */,
 				93F5F2592C8D55820031C0B0 /* Assets.xcassets */,
+				93F5F2822C8D58100031C0B0 /* Techniques.swift */,
 				93F5F25B2C8D55820031C0B0 /* Feet_Together.entitlements */,
 				93F5F2542C8D55810031C0B0 /* Feet_Together.xcdatamodeld */,
 				93F5F25C2C8D55820031C0B0 /* Preview Content */,
@@ -265,10 +289,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93F5F2832C8D58100031C0B0 /* Techniques.swift in Sources */,
 				93F5F2562C8D55810031C0B0 /* Feet_Together.xcdatamodeld in Sources */,
 				93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */,
 				93F5F2582C8D55810031C0B0 /* ContentView.swift in Sources */,
+				93F5F28D2C8D58EB0031C0B0 /* EditSessionView.swift in Sources */,
+				93F5F28B2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift in Sources */,
+				93F5F2812C8D57E80031C0B0 /* TrainingSession.swift in Sources */,
+				93F5F2852C8D584B0031C0B0 /* TrainingSessionsView.swift in Sources */,
+				93F5F2892C8D589B0031C0B0 /* iPhoneSessionManager.swift in Sources */,
 				93F5F2532C8D55810031C0B0 /* Persistence.swift in Sources */,
+				93F5F2872C8D58750031C0B0 /* StartTrainingView.swift in Sources */,
+				93F5F28F2C8D591E0031C0B0 /* TechniquesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
