@@ -6,15 +6,27 @@
 //
 
 import SwiftUI
+import CoreData
 
 @main
 struct Feet_TogetherApp: App {
-    let persistenceController = PersistenceController.shared
-
+    
+    // Core Data persistent container
+    let persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "FeetTogetherModel") // Replace with your model name
+        
+        container.loadPersistentStores { storeDescription, error in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        }
+        return container
+    }()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistentContainer.viewContext) // Provide the managed object context
         }
     }
 }
