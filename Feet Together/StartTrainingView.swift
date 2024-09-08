@@ -8,6 +8,7 @@ struct StartTrainingView: View {
     @State private var countdownSeconds = 0
     @State private var countdownActive = false
     @State private var cancellable: AnyCancellable? = nil
+    @State private var shuffledTechniques: [Technique] = []
 
     private var sessionManager = iPhoneSessionManager()
     private var trainingSessions: [TrainingSession]
@@ -23,8 +24,8 @@ struct StartTrainingView: View {
                 Text("Session Complete!")
                     .font(.largeTitle)
                     .padding()
-            } else if currentTechniqueIndex < trainingSessions[0].techniques.count {
-                Text(trainingSessions[0].techniques[currentTechniqueIndex].name)
+            } else if currentTechniqueIndex < shuffledTechniques.count {
+                Text(shuffledTechniques[currentTechniqueIndex].name) // Display the shuffled technique
                     .font(.largeTitle)
                     .padding()
 
@@ -41,17 +42,28 @@ struct StartTrainingView: View {
             }
         }
         .onAppear {
-            startTechnique() // Start the first technique
+            startSession()
         }
         .onDisappear {
-            endTrainingSession() // Stop the training session when the view is dismissed
+            endTrainingSession()
         }
+    }
+
+    // Start the session and shuffle techniques if randomization is enabled
+    private func startSession() {
+        if trainingSessions[0].randomizeTechniques {
+            shuffledTechniques = trainingSessions[0].techniques.shuffled() // Shuffle techniques
+        } else {
+            shuffledTechniques = trainingSessions[0].techniques // Keep original order
+        }
+        currentTechniqueIndex = 0 // Reset to the first technique
+        startTechnique() // Start the first technique
     }
 
     // Start the current technique and begin countdown if required
     private func startTechnique() {
         // Speak the name of the current technique
-        speakText(trainingSessions[0].techniques[currentTechniqueIndex].name)
+        speakText(shuffledTechniques[currentTechniqueIndex].name)
         
         // Start countdown for the next technique
         countdownActive = true
@@ -77,7 +89,7 @@ struct StartTrainingView: View {
 
     // Move to the next technique and restart the countdown
     private func moveToNextTechnique() {
-        if currentTechniqueIndex < trainingSessions[0].techniques.count - 1 {
+        if currentTechniqueIndex < shuffledTechniques.count - 1 {
             currentTechniqueIndex += 1
             startTechnique() // Restart the next technique and countdown
         } else {
