@@ -25,7 +25,7 @@ struct StartTrainingView: View {
                     .font(.largeTitle)
                     .padding()
             } else if currentTechniqueIndex < shuffledTechniques.count {
-                Text(shuffledTechniques[currentTechniqueIndex].name) // Display the shuffled technique
+                Text(shuffledTechniques[currentTechniqueIndex].name)
                     .font(.largeTitle)
                     .padding()
 
@@ -52,20 +52,17 @@ struct StartTrainingView: View {
     // Start the session and shuffle techniques if randomization is enabled
     private func startSession() {
         if trainingSessions[0].randomizeTechniques {
-            shuffledTechniques = trainingSessions[0].techniques.shuffled() // Shuffle techniques
+            shuffledTechniques = trainingSessions[0].techniques.shuffled()
         } else {
-            shuffledTechniques = trainingSessions[0].techniques // Keep original order
+            shuffledTechniques = trainingSessions[0].techniques
         }
-        currentTechniqueIndex = 0 // Reset to the first technique
-        startTechnique() // Start the first technique
+        currentTechniqueIndex = 0
+        startTechnique()
     }
 
-    // Start the current technique and begin countdown if required
+    // Start the current technique and begin countdown
     private func startTechnique() {
-        // Speak the name of the current technique
         speakText(shuffledTechniques[currentTechniqueIndex].name)
-        
-        // Start countdown for the next technique
         countdownActive = true
         startCountdown(seconds: trainingSessions[0].timeBetweenTechniques)
     }
@@ -73,8 +70,7 @@ struct StartTrainingView: View {
     // Start the countdown using Combine's Timer publisher
     private func startCountdown(seconds: Int) {
         countdownSeconds = seconds
-        cancellable?.cancel() // Cancel the previous countdown if any
-        
+        cancellable?.cancel()
         cancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
@@ -91,18 +87,26 @@ struct StartTrainingView: View {
     private func moveToNextTechnique() {
         if currentTechniqueIndex < shuffledTechniques.count - 1 {
             currentTechniqueIndex += 1
-            startTechnique() // Restart the next technique and countdown
+            startTechnique()
         } else {
             isSessionComplete = true
-            cancellable?.cancel() // Cancel the countdown once the session is complete
+            cancellable?.cancel()
+            announceEndOfSession() // Announce the end of the session
         }
+    }
+
+    // Announce the end of the session using text-to-speech
+    private func announceEndOfSession() {
+        let utterance = AVSpeechUtterance(string: "Congratulations! You have completed the training session.")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        speechSynthesizer.speak(utterance)
     }
 
     // Stop the countdown and speech synthesis when the view is dismissed
     private func endTrainingSession() {
-        cancellable?.cancel() // Cancel the countdown
+        cancellable?.cancel()
         if speechSynthesizer.isSpeaking {
-            speechSynthesizer.stopSpeaking(at: .immediate) // Stop any ongoing speech
+            speechSynthesizer.stopSpeaking(at: .immediate)
         }
     }
 
