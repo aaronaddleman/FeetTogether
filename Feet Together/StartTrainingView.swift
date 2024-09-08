@@ -43,6 +43,9 @@ struct StartTrainingView: View {
         .onAppear {
             startTechnique() // Start the first technique
         }
+        .onDisappear {
+            endTrainingSession() // Stop the training session when the view is dismissed
+        }
     }
 
     // Start the current technique and begin countdown if required
@@ -58,7 +61,6 @@ struct StartTrainingView: View {
     // Start the countdown using Combine's Timer publisher
     private func startCountdown(seconds: Int) {
         countdownSeconds = seconds
-        
         cancellable?.cancel() // Cancel the previous countdown if any
         
         cancellable = Timer.publish(every: 1, on: .main, in: .common)
@@ -81,6 +83,14 @@ struct StartTrainingView: View {
         } else {
             isSessionComplete = true
             cancellable?.cancel() // Cancel the countdown once the session is complete
+        }
+    }
+
+    // Stop the countdown and speech synthesis when the view is dismissed
+    private func endTrainingSession() {
+        cancellable?.cancel() // Cancel the countdown
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.stopSpeaking(at: .immediate) // Stop any ongoing speech
         }
     }
 
