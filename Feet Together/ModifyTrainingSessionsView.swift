@@ -9,23 +9,26 @@ import SwiftUI
 
 struct ModifyTrainingSessionsView: View {
     @Binding var trainingSessions: [TrainingSession]
-
+    @Binding var allTechniques: [Technique]
+    @Binding var allExercises: [Exercise]
+    @Binding var allKatas: [Kata]
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach($trainingSessions) { $session in
-                    NavigationLink(
-                        destination: EditSessionView(session: $session) // No need for techniques, exercises, or katas
-                    ) {
-                        Text(session.name)
-                    }
-                }
-                .onDelete { indexSet in
-                    trainingSessions.remove(atOffsets: indexSet)
+        List {
+            ForEach($trainingSessions) { $session in
+                NavigationLink(destination: EditSessionView(
+                    session: $session,
+                    allTechniques: $allTechniques,
+                    allExercises: $allExercises,
+                    allKatas: $allKatas
+                )) {
+                    Text(session.name)
                 }
             }
-            .navigationTitle("Modify Training Sessions")
-            .toolbar {
+        }
+        .navigationTitle("Modify Training Sessions")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: addNewSession) {
                     Image(systemName: "plus")
                 }
@@ -33,13 +36,14 @@ struct ModifyTrainingSessionsView: View {
         }
     }
 
+    // Add a new session with the correct argument order for TrainingSession
     private func addNewSession() {
         let newSession = TrainingSession(
             name: "New Session",
             timeBetweenTechniques: 10,
-            isFeetTogetherEnabled: true,
+            isFeetTogetherEnabled: false,
             randomizeTechniques: false,
-            sections: []  // Empty sections, user will fill them later
+            sections: []
         )
         trainingSessions.append(newSession)
     }

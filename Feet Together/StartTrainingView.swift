@@ -3,14 +3,18 @@ import AVFoundation
 import Combine
 
 struct StartTrainingView: View {
-    var session: TrainingSession  // This holds the session data
-    @State private var trainingItems: [(sectionType: SectionType, item: AnyTrainingItem)] = []  // List of section-type and item pairs
+    @State private var currentSectionIndex = 0
     @State private var currentItemIndex = 0
+    @State private var isSessionComplete = false
     @State private var countdownSeconds = 0
     @State private var countdownActive = false
-    @State private var isSessionComplete = false
-    @State private var cancellable: AnyCancellable? = nil  // For managing the countdown timer
-    private let speechSynthesizer = AVSpeechSynthesizer()
+    @State private var cancellable: AnyCancellable? = nil
+    @State private var session: TrainingSession  // Use @State to allow modifications
+    private let speechSynthesizer = AVSpeechSynthesizer()  // Add text-to-speech support
+
+    init(session: TrainingSession) {
+        self._session = State(initialValue: session)  // Initialize the session as a @State
+    }
 
     var body: some View {
         VStack {
@@ -18,32 +22,24 @@ struct StartTrainingView: View {
                 Text("Session Complete!")
                     .font(.largeTitle)
                     .padding()
-            } else if let currentItem = getCurrentItem() {
-                Text(currentItem.item.name)
-                    .font(.largeTitle)
-                    .padding()
+                Button("Restart Session") {
+                    restartSession()
+                }
+                .padding()
+            } else {
+                if let currentItem = getCurrentItem() {
+                    Text(currentItem.name)
+                        .font(.largeTitle)
+                        .padding()
 
-                switch currentItem.sectionType {
-                case .exercise:
-                    Button("Move to Next Exercise") {
-                        moveToNextItem()
-                    }
-                    .padding()
-                    
-                case .technique:
+                    // Countdown timer UI
                     if countdownActive {
                         Text("Next in \(countdownSeconds) seconds")
                             .font(.title)
                             .padding()
                     }
 
-                    Button("Skip to Next Technique") {
-                        moveToNextItem()
-                    }
-                    .padding()
-                    
-                case .kata:
-                    Button("Move to Next Kata") {
+                    Button("Next Item") {
                         moveToNextItem()
                     }
                     .padding()
@@ -54,47 +50,39 @@ struct StartTrainingView: View {
             startSession()
         }
         .onDisappear {
-            endSession()  // Clean up when the view is dismissed
+            endTrainingSession()  // Stop the timer if the view is dismissed
         }
     }
 
-    // Get the current training item from the list
-    private func getCurrentItem() -> (sectionType: SectionType, item: AnyTrainingItem)? {
-        guard currentItemIndex < trainingItems.count else { return nil }
-        return trainingItems[currentItemIndex]
+    // Start the session and begin the countdown for the first item
+    private func startSession() {
+        // No need to filter; we assume session.sections already contains only selected items.
+        currentSectionIndex = 0
+        currentItemIndex = 0
+        startCurrentItem()
     }
 
-    // Move to the next item in the training list
-    private func moveToNextItem() {
-        if currentItemIndex < trainingItems.count - 1 {
-            currentItemIndex += 1
-            startItem()  // Start the next item with countdown if needed
-        } else {
-            isSessionComplete = true
-            cancellable?.cancel()
-            announceEndOfSession()  // Announce the session is over
-        }
+    // Get the current item to display and announce
+    private func getCurrentItem() -> AnyTrainingItem? {
+        guard currentSectionIndex < session.sections.count else { return nil }
+        let currentSection = session.sections[currentSectionIndex]
+        guard currentItemIndex < currentSection.items.count else { return nil }
+        return currentSection.items[currentItemIndex]
     }
 
-    // Start the current training item and handle section-specific behavior
-    private func startItem() {
+    // Start the current item, announce it, and start the countdown
+    private func startCurrentItem() {
         if let currentItem = getCurrentItem() {
-            speakText(currentItem.item.name)  // Announce the current technique/item
-            
-            switch currentItem.sectionType {
-            case .technique:
-                countdownActive = true
-                startCountdown(seconds: Int(session.timeBetweenTechniques))  // Start the countdown
-            default:
-                countdownActive = false
-            }
+            speakText(currentItem.name)  // Announce the item via text-to-speech
+            countdownActive = true  // Activate the countdown
+            startCountdown(seconds: session.timeBetweenTechniques)  // Use the session's timeBetweenTechniques for the countdown
         }
     }
 
-    // Start the countdown timer for techniques
+    // Start the countdown using Combine's Timer publisher
     private func startCountdown(seconds: Int) {
         countdownSeconds = seconds
-        cancellable?.cancel()
+        cancellable?.cancel()  // Cancel any previous countdown
         cancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
@@ -102,25 +90,48 @@ struct StartTrainingView: View {
                     self.countdownSeconds -= 1
                 } else {
                     self.cancellable?.cancel()
-                    self.moveToNextItem()  // Automatically move to the next item when the countdown is over
+                    self.moveToNextItem()
                 }
             }
     }
 
-    // Start the session and build the ordered list of training items from the sections
-    private func startSession() {
-        // Build the trainingItems array by adding items from each section in order
-        trainingItems = session.sections.flatMap { section in
-            section.items.map { (sectionType: section.type, item: $0) }
+    // Move to the next item in the session
+    private func moveToNextItem() {
+        cancellable?.cancel()  // Cancel the current countdown
+
+        if currentItemIndex < session.sections[currentSectionIndex].items.count - 1 {
+            currentItemIndex += 1
+        } else if currentSectionIndex < session.sections.count - 1 {
+            currentItemIndex = 0
+            currentSectionIndex += 1
+        } else {
+            isSessionComplete = true
+            announceEndOfSession()  // Announce the end of the session via text-to-speech
+            return
         }
 
-        // Shuffle techniques if necessary
-        if session.randomizeTechniques {
-            trainingItems = trainingItems.shuffledBySection(of: .technique)
-        }
+        startCurrentItem()  // Start the next item
+    }
 
-        currentItemIndex = 0  // Start from the first item
-        startItem()  // Begin the first technique/item
+    // Restart the session
+    private func restartSession() {
+        isSessionComplete = false
+        startSession()
+    }
+
+    // End the session, stopping any active countdown and speech synthesis
+    private func endTrainingSession() {
+        cancellable?.cancel()
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.stopSpeaking(at: .immediate)
+        }
+    }
+
+    // Text-to-speech function to announce the current item
+    private func speakText(_ text: String) {
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        speechSynthesizer.speak(utterance)
     }
 
     // Announce the end of the session
@@ -128,29 +139,5 @@ struct StartTrainingView: View {
         let utterance = AVSpeechUtterance(string: "Congratulations! You have completed the training session.")
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         speechSynthesizer.speak(utterance)
-    }
-
-    // Stop the countdown and speech synthesis when the view is dismissed
-    private func endSession() {
-        cancellable?.cancel()
-        if speechSynthesizer.isSpeaking {
-            speechSynthesizer.stopSpeaking(at: .immediate)
-        }
-    }
-
-    // Speak the text using text-to-speech
-    private func speakText(_ text: String) {
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        speechSynthesizer.speak(utterance)
-    }
-}
-
-// Custom extension to shuffle only the techniques section
-extension Array where Element == (sectionType: SectionType, item: AnyTrainingItem) {
-    func shuffledBySection(of type: SectionType) -> [(sectionType: SectionType, item: AnyTrainingItem)] {
-        let techniques = filter { $0.sectionType == type }.shuffled()
-        let others = filter { $0.sectionType != type }
-        return others + techniques
     }
 }

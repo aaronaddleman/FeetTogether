@@ -5,6 +5,9 @@ struct ContentView: View {
     @State private var techniques: [Technique] = predefinedTechniques
     @State private var exercises: [Exercise] = predefinedExercises
     @State private var katas: [Kata] = predefinedKatas
+    @Binding var allTechniques: [Technique]
+    @Binding var allExercises: [Exercise]
+    @Binding var allKatas: [Kata]
     
     var body: some View {
         NavigationView {
@@ -32,7 +35,10 @@ struct ContentView: View {
                 // Navigate to Modify Training Sessions
                 NavigationLink(
                     destination: ModifyTrainingSessionsView(
-                        trainingSessions: $trainingSessions
+                        trainingSessions: $trainingSessions,
+                        allTechniques: $allTechniques,
+                        allExercises: $allExercises,
+                        allKatas: $allKatas
                     )
                 ) {
                     Text("Modify Training Sessions")

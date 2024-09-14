@@ -15,6 +15,10 @@
 		9324E7A12C95300700E3959A /* EditTechniquesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A02C95300700E3959A /* EditTechniquesView.swift */; };
 		9324E7A32C95301E00E3959A /* EditExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A22C95301E00E3959A /* EditExerciseView.swift */; };
 		9324E7A52C95304C00E3959A /* EditKatasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A42C95304C00E3959A /* EditKatasView.swift */; };
+		9324E7A72C954DAF00E3959A /* AddTechniqueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A62C954DAF00E3959A /* AddTechniqueView.swift */; };
+		9324E7A92C95527F00E3959A /* SelectTechniquesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */; };
+		9324E7AB2C955BEA00E3959A /* SelectExercisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7AA2C955BEA00E3959A /* SelectExercisesView.swift */; };
+		9324E7AD2C955BFC00E3959A /* SelectKatasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */; };
 		93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */; };
 		93F5F2532C8D55810031C0B0 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2522C8D55810031C0B0 /* Persistence.swift */; };
 		93F5F2562C8D55810031C0B0 /* Feet_Together.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2542C8D55810031C0B0 /* Feet_Together.xcdatamodeld */; };
@@ -60,6 +64,10 @@
 		9324E7A02C95300700E3959A /* EditTechniquesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTechniquesView.swift; sourceTree = "<group>"; };
 		9324E7A22C95301E00E3959A /* EditExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditExerciseView.swift; sourceTree = "<group>"; };
 		9324E7A42C95304C00E3959A /* EditKatasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKatasView.swift; sourceTree = "<group>"; };
+		9324E7A62C954DAF00E3959A /* AddTechniqueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTechniqueView.swift; sourceTree = "<group>"; };
+		9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTechniquesView.swift; sourceTree = "<group>"; };
+		9324E7AA2C955BEA00E3959A /* SelectExercisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectExercisesView.swift; sourceTree = "<group>"; };
+		9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKatasView.swift; sourceTree = "<group>"; };
 		93F5F24D2C8D55810031C0B0 /* Feet Together.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Feet Together.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherApp.swift; sourceTree = "<group>"; };
 		93F5F2522C8D55810031C0B0 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -139,7 +147,11 @@
 				9324E79C2C95014100E3959A /* KatasView.swift */,
 				93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */,
 				93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */,
+				9324E7AA2C955BEA00E3959A /* SelectExercisesView.swift */,
+				9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */,
+				9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */,
 				9324E7A02C95300700E3959A /* EditTechniquesView.swift */,
+				9324E7A62C954DAF00E3959A /* AddTechniqueView.swift */,
 				9324E7A22C95301E00E3959A /* EditExerciseView.swift */,
 				9324E7A42C95304C00E3959A /* EditKatasView.swift */,
 				93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */,
@@ -313,14 +325,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9324E7A72C954DAF00E3959A /* AddTechniqueView.swift in Sources */,
 				93F5F2832C8D58100031C0B0 /* Techniques.swift in Sources */,
 				93F5F2562C8D55810031C0B0 /* Feet_Together.xcdatamodeld in Sources */,
 				9324E7952C94FDBD00E3959A /* TrainingSection.swift in Sources */,
 				9324E7972C94FF4200E3959A /* Exercises.swift in Sources */,
+				9324E7AB2C955BEA00E3959A /* SelectExercisesView.swift in Sources */,
 				9324E79B2C95012600E3959A /* ExercisesView.swift in Sources */,
 				93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */,
 				93F5F2582C8D55810031C0B0 /* ContentView.swift in Sources */,
 				9324E79D2C95014100E3959A /* KatasView.swift in Sources */,
+				9324E7A92C95527F00E3959A /* SelectTechniquesView.swift in Sources */,
 				93F5F28D2C8D58EB0031C0B0 /* EditSessionView.swift in Sources */,
 				93F5F28B2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift in Sources */,
 				93F5F2812C8D57E80031C0B0 /* TrainingSession.swift in Sources */,
@@ -333,6 +348,7 @@
 				93F5F2872C8D58750031C0B0 /* StartTrainingView.swift in Sources */,
 				93F5F28F2C8D591E0031C0B0 /* TechniquesView.swift in Sources */,
 				9324E7A52C95304C00E3959A /* EditKatasView.swift in Sources */,
+				9324E7AD2C955BFC00E3959A /* SelectKatasView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@ import Foundation
 struct TrainingSession: Identifiable, Equatable {
     var id = UUID()
     var name: String
-    var timeBetweenTechniques: Double
+    var timeBetweenTechniques: Int
     var isFeetTogetherEnabled: Bool
     var randomizeTechniques: Bool
     var sections: [TrainingSection]

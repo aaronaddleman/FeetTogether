@@ -7,13 +7,15 @@
 
 import Foundation
 
-struct TrainingSection: Identifiable {
+struct TrainingSection: Identifiable, Equatable {
     var id = UUID()
     var type: SectionType
     var items: [AnyTrainingItem]
+
+    // Swift automatically synthesizes the Equatable conformance if all properties are Equatable
 }
 
-enum SectionType: String, CaseIterable, Identifiable {
+enum SectionType: String, CaseIterable, Identifiable, Equatable {
     case technique = "Techniques"
     case exercise = "Exercises"
     case kata = "Katas"
@@ -51,8 +53,10 @@ struct AnyTrainingItem: Identifiable, Equatable {
         self.category = kata.category
     }
 
-    // Equatable to compare items
-    static func == (lhs: AnyTrainingItem, rhs: AnyTrainingItem) -> Bool {
-        return lhs.id == rhs.id
+    // Explicit initializer
+    init(id: UUID = UUID(), name: String, category: String) {
+        self.id = id
+        self.name = name
+        self.category = category
     }
 }

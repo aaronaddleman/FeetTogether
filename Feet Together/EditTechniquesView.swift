@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct EditTechniquesView: View {
-    @Binding var session: TrainingSession
+    @Binding var session: TrainingSession  // Binding to the session
+    @State private var showingAddTechnique = false  // Control the sheet presentation
 
     var body: some View {
         List {
@@ -25,10 +26,25 @@ struct EditTechniquesView: View {
                 Text("No techniques found.")
             }
         }
-        .toolbar {
-            EditButton() // Enables drag-and-drop if necessary
-        }
         .navigationTitle("Edit Techniques")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showingAddTechnique.toggle()  // Present the add technique view
+                }) {
+                    Image(systemName: "plus")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAddTechnique) {
+            if let sectionIndex = session.sections.firstIndex(where: { $0.type == .technique }) {
+                // Pass the technique items from the section to the AddTechniqueView
+                AddTechniqueView(techniques: $session.sections[sectionIndex].items)
+            } else {
+                // Handle case where the techniques section doesn't exist yet
+                AddTechniqueView(techniques: .constant([]))  // Empty list to avoid crash
+            }
+        }
     }
 
     // Toggle Binding for Item Activation

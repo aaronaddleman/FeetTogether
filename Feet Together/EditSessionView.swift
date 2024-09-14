@@ -8,56 +8,44 @@
 import SwiftUI
 
 struct EditSessionView: View {
-    @Binding var session: TrainingSession  // No need to pass separate allTechniques, allExercises, allKatas
+    @Binding var session: TrainingSession
+    @Binding var allTechniques: [Technique]
+    @Binding var allExercises: [Exercise]
+    @Binding var allKatas: [Kata]
 
     var body: some View {
         Form {
-            // Session name
             Section(header: Text("Session Name")) {
-                TextField("Enter session name", text: $session.name)
+                TextField("Session Name", text: $session.name)
             }
 
-            // Time between techniques
-            Section(header: Text("Set Time Between Techniques")) {
+            Section(header: Text("Time Between Techniques (Seconds)")) {
                 HStack {
                     Text("Time (seconds):")
                     Spacer()
                     TextField("Seconds", value: $session.timeBetweenTechniques, formatter: NumberFormatter())
                         .keyboardType(.numberPad)
-                        .frame(width: 50)
+                        .frame(width: 60)
                         .multilineTextAlignment(.trailing)
                 }
             }
 
-            // Randomize techniques toggle
-            Section(header: Text("Randomize Techniques")) {
+            Section(header: Text("Settings")) {
                 Toggle("Randomize Techniques", isOn: $session.randomizeTechniques)
             }
 
-            // Reorder sections: Techniques, Exercises, Katas
-            Section(header: Text("Reorder Sections")) {
-                EditButton()
-                List {
-                    ForEach($session.sections) { $section in
-                        HStack {
-                            Image(systemName: "line.horizontal.3")
-                                .foregroundColor(.gray)
-                            Text(section.type.rawValue)
-                        }
-                    }
-                    .onMove { indices, newOffset in
-                        session.sections.move(fromOffsets: indices, toOffset: newOffset)
-                    }
-                }
+            Section(header: Text("Select Techniques")) {
+                NavigationLink("Select Techniques", destination: SelectTechniquesView(session: $session, allTechniques: $allTechniques))
             }
 
-            // Navigate to Edit Sections (Techniques, Exercises, Katas)
-            Section(header: Text("Edit Sections")) {
-                NavigationLink("Edit Techniques", destination: EditTechniquesView(session: $session))
-                NavigationLink("Edit Exercises", destination: EditExercisesView(session: $session))
-                NavigationLink("Edit Katas", destination: EditKatasView(session: $session))
+            Section(header: Text("Select Exercises")) {
+                NavigationLink("Select Exercises", destination: SelectExercisesView(session: $session, allExercises: $allExercises))
+            }
+
+            Section(header: Text("Select Katas")) {
+                NavigationLink("Select Katas", destination: SelectKatasView(session: $session, allKatas: $allKatas))
             }
         }
-        .navigationTitle("Edit \(session.name)")
+        .navigationTitle("Edit Session")
     }
 }
