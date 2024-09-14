@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Technique: Identifiable, Equatable {
+struct Technique: TrainingItem, Identifiable, Equatable {
     var id = UUID()
     var name: String
     var category: String

@@ -7,11 +7,15 @@
 
 import Foundation
 
-struct TrainingSession: Identifiable {
+struct TrainingSession: Identifiable, Equatable {
     var id = UUID()
     var name: String
-    var techniques: [Technique]
-    var timeBetweenTechniques: Int = 10
-    var isFeetTogetherEnabled: Bool = false
-    var randomizeTechniques: Bool = false
+    var timeBetweenTechniques: Double
+    var isFeetTogetherEnabled: Bool
+    var randomizeTechniques: Bool
+    var sections: [TrainingSection]
+
+    static func == (lhs: TrainingSession, rhs: TrainingSession) -> Bool {
+        return lhs.id == rhs.id
+    }
 }

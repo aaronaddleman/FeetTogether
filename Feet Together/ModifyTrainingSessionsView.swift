@@ -10,12 +10,14 @@ import SwiftUI
 struct ModifyTrainingSessionsView: View {
     @Binding var trainingSessions: [TrainingSession]
     @Binding var allTechniques: [Technique]
+    @Binding var allExercises: [Exercise]
+    @Binding var allKatas: [Kata]
 
     var body: some View {
         // Example UI for modifying training sessions
         List {
             ForEach($trainingSessions) { $session in
-                NavigationLink(destination: EditSessionView(session: $session, allTechniques: $allTechniques)) {
+                NavigationLink(destination: EditSessionView(session: $session, allTechniques: $allTechniques, allExercises: $allExercises, allKatas: $allKatas)) {
                     Text(session.name)
                 }
             }
@@ -32,7 +34,13 @@ struct ModifyTrainingSessionsView: View {
     }
     
     private func addNewSession() {
-        let newSession = TrainingSession(name: "New Session", techniques: [])
+        let newSession = TrainingSession(
+            name: "New Session",
+            timeBetweenTechniques: 10,
+            isFeetTogetherEnabled: false,
+            randomizeTechniques: false,
+            sections: []
+        )
         trainingSessions.append(newSession)
     }
 }
