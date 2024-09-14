@@ -17,10 +17,7 @@ struct ContentView: View {
                 // Navigate to session selection
                 NavigationLink(
                     destination: TrainingSessionsView(
-                        trainingSessions: $trainingSessions,
-                        allTechniques: $techniques,
-                        allExercises: $exercises,
-                        allKatas: $katas
+                        trainingSessions: $trainingSessions
                     )
                 ) {
                     Text("Start Training")
@@ -35,10 +32,7 @@ struct ContentView: View {
                 // Navigate to Modify Training Sessions
                 NavigationLink(
                     destination: ModifyTrainingSessionsView(
-                        trainingSessions: $trainingSessions,
-                        allTechniques: $techniques,
-                        allExercises: $exercises,
-                        allKatas: $katas
+                        trainingSessions: $trainingSessions
                     )
                 ) {
                     Text("Modify Training Sessions")

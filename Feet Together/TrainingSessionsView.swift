@@ -84,22 +84,30 @@ let predefinedTrainingSessions: [TrainingSession] = [
     )
 ]
 
+import SwiftUI
+
+import SwiftUI
+
 struct TrainingSessionsView: View {
     @Binding var trainingSessions: [TrainingSession]
-    @Binding var allTechniques: [Technique]
-    @Binding var allExercises: [Exercise]
-    @Binding var allKatas: [Kata]
-    @State private var selectedSession: TrainingSession?
 
     var body: some View {
-        List {
-            // Display available training sessions
-            ForEach(trainingSessions) { session in
-                NavigationLink(destination: StartTrainingView(session: $trainingSessions[trainingSessions.firstIndex(of: session)!])) {
-                    Text(session.name)
+        NavigationView {
+            List {
+                ForEach(trainingSessions.indices, id: \.self) { index in  // Use indices to access each session
+                    NavigationLink(
+                        destination: StartTrainingView(session: trainingSessions[index])  // Pass session, no binding needed
+                    ) {
+                        Text(trainingSessions[index].name)
+                    }
+                }
+                .onDelete { indexSet in
+                    trainingSessions.remove(atOffsets: indexSet)
                 }
             }
+            .navigationTitle("Training Sessions")
         }
-        .navigationTitle("Training Sessions")
     }
 }
+
+
