@@ -9,13 +9,19 @@ import SwiftUI
 
 struct SelectKatasView: View {
     @Binding var session: TrainingSession
-    @Binding var allKatas: [Kata]
-    @State private var localSections: [TrainingSection]
+    var allKatas: [Kata]
 
-    init(session: Binding<TrainingSession>, allKatas: Binding<[Kata]>) {
+    // Local state for tracking selected katas
+    @State private var selectedKatas: [UUID: Bool] = [:]
+
+    init(session: Binding<TrainingSession>, allKatas: [Kata]) {
         self._session = session
-        self._allKatas = allKatas
-        self._localSections = State(initialValue: session.wrappedValue.sections)
+        self.allKatas = allKatas
+        
+        // Initialize local selectedKatas from the session's state
+        let initialSelectedKatas = session.wrappedValue.selectedKatas
+        print("Initializing selected katas from session: \(initialSelectedKatas)")
+        _selectedKatas = State(initialValue: initialSelectedKatas)
     }
 
     var body: some View {
@@ -24,7 +30,17 @@ struct SelectKatasView: View {
                 HStack {
                     Text(kata.name)
                     Spacer()
-                    Toggle(isOn: isKataSelectedBinding(for: kata)) {
+                    Toggle(isOn: Binding<Bool>(
+                        get: {
+                            let isSelected = selectedKatas[kata.id] ?? false
+                            print("Kata \(kata.name) is selected: \(isSelected)")
+                            return isSelected
+                        },
+                        set: { newValue in
+                            print("Toggling \(kata.name) to \(newValue)")
+                            selectedKatas[kata.id] = newValue
+                        }
+                    )) {
                         Text("")
                     }
                     .labelsHidden()
@@ -33,57 +49,31 @@ struct SelectKatasView: View {
         }
         .navigationTitle("Select Katas")
         .onDisappear {
-            // Save selected katas while preserving other sections (techniques, exercises)
             saveSelectedKatas()
         }
     }
 
-    private func isKataSelectedBinding(for kata: Kata) -> Binding<Bool> {
-        return Binding<Bool>(
-            get: {
-                isSelected(kata: kata)
-            },
-            set: { newValue in
-                withAnimation {
-                    toggleKata(kata, isSelected: newValue)
-                }
-            }
-        )
-    }
-
-    private func isSelected(kata: Kata) -> Bool {
-        if let katasSection = localSections.first(where: { $0.type == .kata }) {
-            return katasSection.items.contains { $0.id == kata.id }
-        }
-        return false
-    }
-
-    private func toggleKata(_ kata: Kata, isSelected: Bool) {
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .kata }) {
-            if isSelected {
-                if !localSections[sectionIndex].items.contains(where: { $0.id == kata.id }) {
-                    let newItem = AnyTrainingItem(kata)
-                    localSections[sectionIndex].items.append(newItem)
-                }
-            } else {
-                if let itemIndex = localSections[sectionIndex].items.firstIndex(where: { $0.id == kata.id }) {
-                    localSections[sectionIndex].items.remove(at: itemIndex)
-                }
-            }
-        } else if isSelected {
-            let newSection = TrainingSection(type: .kata, items: [AnyTrainingItem(kata)])
-            localSections.append(newSection)
-        }
-    }
-
     private func saveSelectedKatas() {
-        // Preserve other sections (e.g., techniques, exercises) while updating the katas section
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .kata }) {
-            if let sessionSectionIndex = session.sections.firstIndex(where: { $0.type == .kata }) {
-                session.sections[sessionSectionIndex] = localSections[sectionIndex]
-            } else {
-                session.sections.append(localSections[sectionIndex])
-            }
+        // Log the current selected katas for debugging
+        let selectedKatasList = selectedKatas.filter { $0.value == true }
+        print("Selected Katas to save: \(selectedKatasList.map { $0.key })")
+
+        // Remove old katas section from session
+        print("Removing old katas section from session")
+        session.sections.removeAll { $0.type == .kata }
+
+        // Create a new section with the selected katas
+        let selectedItems = allKatas.filter { selectedKatas[$0.id] == true }.map { AnyTrainingItem($0) }
+        if !selectedItems.isEmpty {
+            let newSection = TrainingSection(type: .kata, items: selectedItems)
+            print("Adding new katas section: \(newSection.items.map { $0.name })")
+            session.sections.append(newSection)
+        } else {
+            print("No katas selected, no section added")
         }
+
+        // Update the session's selectedKatas with the local state
+        session.selectedKatas = selectedKatas
+        print("Session's selectedKatas updated: \(session.selectedKatas)")
     }
 }

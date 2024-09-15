@@ -6,17 +6,14 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct SelectTechniquesView: View {
     @Binding var session: TrainingSession
-    @Binding var allTechniques: [Technique]
-    @State private var localSections: [TrainingSection]
-
-    init(session: Binding<TrainingSession>, allTechniques: Binding<[Technique]>) {
-        self._session = session
-        self._allTechniques = allTechniques
-        self._localSections = State(initialValue: session.wrappedValue.sections)
-    }
+    var allTechniques: [Technique]
+    
+    @Environment(\.managedObjectContext) private var context
+    @State var selectedTechniques: [String: Bool] = [:]  // Holds UUIDs as strings for the technique selection
 
     var body: some View {
         List {
@@ -24,7 +21,19 @@ struct SelectTechniquesView: View {
                 HStack {
                     Text(technique.name)
                     Spacer()
-                    Toggle(isOn: isTechniqueSelectedBinding(for: technique)) {
+                    Toggle(isOn: Binding<Bool>(
+                        get: {
+                            let idString = technique.id.uuidString  // Convert UUID to String
+                            let isSelected = selectedTechniques[idString] ?? false
+                            print("Technique \(technique.name) is selected: \(isSelected)")
+                            return isSelected
+                        },
+                        set: { newValue in
+                            let idString = technique.id.uuidString  // Convert UUID to String
+                            print("Toggling \(technique.name) to \(newValue)")
+                            selectedTechniques[idString] = newValue
+                        }
+                    )) {
                         Text("")
                     }
                     .labelsHidden()
@@ -32,58 +41,93 @@ struct SelectTechniquesView: View {
             }
         }
         .navigationTitle("Select Techniques")
+        .onAppear {
+            loadSelectedTechniques(context: context)
+        }
         .onDisappear {
-            // Save selected techniques and keep other sections intact
-            saveSelectedTechniques()
+            print("onDisappear called: Saving selected techniques...")
+            print("Selected techniques before save: \(selectedTechniques)")
+            saveSelectedTechniques(context: context)
+            print("Selected techniques after save: \(selectedTechniques)")
         }
     }
 
-    private func isTechniqueSelectedBinding(for technique: Technique) -> Binding<Bool> {
-        return Binding<Bool>(
-            get: {
-                isSelected(technique: technique)
-            },
-            set: { newValue in
-                withAnimation {
-                    toggleTechnique(technique, isSelected: newValue)
-                }
+    // Load selected techniques from Core Data and merge with session
+    private func loadSelectedTechniques(context: NSManagedObjectContext) {
+        // Fetch selected techniques from Core Data
+        let fetchedSelectedTechniques = fetchSelectedTechniques(context: context)
+        
+        // Convert fetched techniques to a dictionary
+        var techniquesDictionary: [String: Bool] = [:]
+        for technique in fetchedSelectedTechniques {
+            if let id = technique.id?.uuidString {
+                techniquesDictionary[id] = technique.isSelected
+                print("Loaded technique from Core Data: \(technique.name ?? "Unknown Name") isSelected: \(technique.isSelected)")
             }
-        )
-    }
-
-    private func isSelected(technique: Technique) -> Bool {
-        if let techniquesSection = localSections.first(where: { $0.type == .technique }) {
-            return techniquesSection.items.contains { $0.id == technique.id }
         }
-        return false
+
+        // Merge the Core Data fetched state with the session state
+        let initialSelectedTechniques = session.selectedTechniques
+        for (uuid, selected) in initialSelectedTechniques {
+            let uuidString = uuid.uuidString
+            techniquesDictionary[uuidString] = selected
+            print("Merging technique from session: \(uuidString) isSelected: \(selected)")
+        }
+
+        print("Final merged state of selected techniques: \(techniquesDictionary)")
+        
+        // Initialize selected techniques with the merged state
+        selectedTechniques = techniquesDictionary
     }
 
-    private func toggleTechnique(_ technique: Technique, isSelected: Bool) {
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .technique }) {
-            if isSelected {
-                if !localSections[sectionIndex].items.contains(where: { $0.id == technique.id }) {
-                    let newItem = AnyTrainingItem(technique)
-                    localSections[sectionIndex].items.append(newItem)
-                }
+    // Save selected techniques
+    private func saveSelectedTechniques(context: NSManagedObjectContext) {
+        // First convert the selected techniques from [String: Bool] to [UUID: Bool]
+        var selectedTechniquesUUID: [UUID: Bool] = [:]
+        
+        for (techniqueIDString, isSelected) in selectedTechniques {
+            if let techniqueUUID = UUID(uuidString: techniqueIDString) {
+                selectedTechniquesUUID[techniqueUUID] = isSelected
             } else {
-                if let itemIndex = localSections[sectionIndex].items.firstIndex(where: { $0.id == technique.id }) {
-                    localSections[sectionIndex].items.remove(at: itemIndex)
-                }
+                print("Invalid UUID for techniqueIDString: \(techniqueIDString)")
             }
-        } else if isSelected {
-            let newSection = TrainingSection(type: .technique, items: [AnyTrainingItem(technique)])
-            localSections.append(newSection)
         }
+
+        // Save to Core Data after conversion
+        for (techniqueUUID, isSelected) in selectedTechniquesUUID {
+            if let existingTechnique = fetchTechniqueEntity(by: techniqueUUID, context: context) {
+                existingTechnique.isSelected = isSelected
+            } else {
+                let newTechniqueEntity = TechniqueEntity(context: context)
+                newTechniqueEntity.id = techniqueUUID
+                newTechniqueEntity.isSelected = isSelected
+            }
+        }
+
+        // Save the Core Data context to persist changes
+        do {
+            try context.save()
+            print("Core Data context saved successfully.")
+        } catch {
+            print("Failed to save techniques in Core Data: \(error)")
+        }
+
+        // Update the session's selectedTechniques with the updated [UUID: Bool]
+        session.selectedTechniques = selectedTechniquesUUID
+        print("Session's selectedTechniques updated: \(session.selectedTechniques)")
     }
 
-    private func saveSelectedTechniques() {
-        // Preserve other sections (e.g., exercises, katas) while updating the techniques section
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .technique }) {
-            if let sessionSectionIndex = session.sections.firstIndex(where: { $0.type == .technique }) {
-                session.sections[sessionSectionIndex] = localSections[sectionIndex]
-            } else {
-                session.sections.append(localSections[sectionIndex])
-            }
+    // Fetch TechniqueEntity by id
+    func fetchTechniqueEntity(by id: UUID, context: NSManagedObjectContext) -> TechniqueEntity? {
+        let fetchRequest: NSFetchRequest<TechniqueEntity> = TechniqueEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results.first
+        } catch {
+            print("Error fetching TechniqueEntity by id: \(error)")
+            return nil
         }
     }
 }

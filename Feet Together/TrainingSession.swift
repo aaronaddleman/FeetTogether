@@ -15,6 +15,11 @@ struct TrainingSession: Identifiable, Equatable {
     var randomizeTechniques: Bool
     var sections: [TrainingSection]
 
+    // Dictionaries for storing selected items
+    var selectedExercises: [UUID: Bool] = [:]
+    var selectedTechniques: [UUID: Bool] = [:]
+    var selectedKatas: [UUID: Bool] = [:]
+    
     static func == (lhs: TrainingSession, rhs: TrainingSession) -> Bool {
         return lhs.id == rhs.id
     }

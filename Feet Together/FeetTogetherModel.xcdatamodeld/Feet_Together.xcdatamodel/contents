@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="ExerciseEntity" representedClassName="ExerciseEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="reps" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyExercises" inverseEntity="TrainingSessionEntity"/>
+    </entity>
+    <entity name="KataEntity" representedClassName="KataEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyKatas" inverseEntity="TrainingSessionEntity"/>
+    </entity>
+    <entity name="TechniqueEntity" representedClassName="TechniqueEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyTechniques" inverseEntity="TrainingSessionEntity"/>
+    </entity>
+    <entity name="TrainingSessionEntity" representedClassName="TrainingSessionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="countdownEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="randomizeTechniques" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="sessionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="toManyExercises" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="session" inverseEntity="ExerciseEntity"/>
+        <relationship name="toManyKatas" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="KataEntity" inverseName="session" inverseEntity="KataEntity"/>
+        <relationship name="toManyTechniques" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TechniqueEntity" inverseName="session" inverseEntity="TechniqueEntity"/>
+    </entity>
+    <entity name="UserSettingsEntity" representedClassName="UserSettingsEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="preferredDuration" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="voiceAssistantEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+</model>

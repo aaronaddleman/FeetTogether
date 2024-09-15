@@ -9,13 +9,19 @@ import SwiftUI
 
 struct SelectExercisesView: View {
     @Binding var session: TrainingSession
-    @Binding var allExercises: [Exercise]
-    @State private var localSections: [TrainingSection]
+    var allExercises: [Exercise]
 
-    init(session: Binding<TrainingSession>, allExercises: Binding<[Exercise]>) {
+    // Local state for tracking selected exercises
+    @State private var selectedExercises: [UUID: Bool] = [:]
+
+    init(session: Binding<TrainingSession>, allExercises: [Exercise]) {
         self._session = session
-        self._allExercises = allExercises
-        self._localSections = State(initialValue: session.wrappedValue.sections)
+        self.allExercises = allExercises
+        
+        // Initialize local selectedExercises from the session's state
+        let initialSelectedExercises = session.wrappedValue.selectedExercises
+        print("Initializing selected exercises from session: \(initialSelectedExercises)")
+        _selectedExercises = State(initialValue: initialSelectedExercises)
     }
 
     var body: some View {
@@ -24,7 +30,17 @@ struct SelectExercisesView: View {
                 HStack {
                     Text(exercise.name)
                     Spacer()
-                    Toggle(isOn: isExerciseSelectedBinding(for: exercise)) {
+                    Toggle(isOn: Binding<Bool>(
+                        get: {
+                            let isSelected = selectedExercises[exercise.id] ?? false
+                            print("Exercise \(exercise.name) is selected: \(isSelected)")
+                            return isSelected
+                        },
+                        set: { newValue in
+                            print("Toggling \(exercise.name) to \(newValue)")
+                            selectedExercises[exercise.id] = newValue
+                        }
+                    )) {
                         Text("")
                     }
                     .labelsHidden()
@@ -33,57 +49,31 @@ struct SelectExercisesView: View {
         }
         .navigationTitle("Select Exercises")
         .onDisappear {
-            // Save selected exercises while preserving other sections (techniques, katas)
             saveSelectedExercises()
         }
     }
 
-    private func isExerciseSelectedBinding(for exercise: Exercise) -> Binding<Bool> {
-        return Binding<Bool>(
-            get: {
-                isSelected(exercise: exercise)
-            },
-            set: { newValue in
-                withAnimation {
-                    toggleExercise(exercise, isSelected: newValue)
-                }
-            }
-        )
-    }
-
-    private func isSelected(exercise: Exercise) -> Bool {
-        if let exercisesSection = localSections.first(where: { $0.type == .exercise }) {
-            return exercisesSection.items.contains { $0.id == exercise.id }
-        }
-        return false
-    }
-
-    private func toggleExercise(_ exercise: Exercise, isSelected: Bool) {
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .exercise }) {
-            if isSelected {
-                if !localSections[sectionIndex].items.contains(where: { $0.id == exercise.id }) {
-                    let newItem = AnyTrainingItem(exercise)
-                    localSections[sectionIndex].items.append(newItem)
-                }
-            } else {
-                if let itemIndex = localSections[sectionIndex].items.firstIndex(where: { $0.id == exercise.id }) {
-                    localSections[sectionIndex].items.remove(at: itemIndex)
-                }
-            }
-        } else if isSelected {
-            let newSection = TrainingSection(type: .exercise, items: [AnyTrainingItem(exercise)])
-            localSections.append(newSection)
-        }
-    }
-
     private func saveSelectedExercises() {
-        // Preserve other sections (e.g., techniques, katas) while updating the exercises section
-        if let sectionIndex = localSections.firstIndex(where: { $0.type == .exercise }) {
-            if let sessionSectionIndex = session.sections.firstIndex(where: { $0.type == .exercise }) {
-                session.sections[sessionSectionIndex] = localSections[sectionIndex]
-            } else {
-                session.sections.append(localSections[sectionIndex])
-            }
+        // Log the current selected exercises for debugging
+        let selectedExercisesList = selectedExercises.filter { $0.value == true }
+        print("Selected Exercises to save: \(selectedExercisesList.map { $0.key })")
+
+        // Remove old exercises section from session
+        print("Removing old exercises section from session")
+        session.sections.removeAll { $0.type == .exercise }
+
+        // Create a new section with the selected exercises
+        let selectedItems = allExercises.filter { selectedExercises[$0.id] == true }.map { AnyTrainingItem($0) }
+        if !selectedItems.isEmpty {
+            let newSection = TrainingSection(type: .exercise, items: selectedItems)
+            print("Adding new exercises section: \(newSection.items.map { $0.name })")
+            session.sections.append(newSection)
+        } else {
+            print("No exercises selected, no section added")
         }
+
+        // Update the session's selectedExercises with the local state
+        session.selectedExercises = selectedExercises
+        print("Session's selectedExercises updated: \(session.selectedExercises)")
     }
 }

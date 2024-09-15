@@ -12,6 +12,9 @@ struct EditSessionView: View {
     @Binding var allTechniques: [Technique]
     @Binding var allExercises: [Exercise]
     @Binding var allKatas: [Kata]
+    
+    // Access the Core Data context from the environment
+    @Environment(\.managedObjectContext) private var context
 
     var body: some View {
         Form {
@@ -19,31 +22,34 @@ struct EditSessionView: View {
                 TextField("Session Name", text: $session.name)
             }
 
-            Section(header: Text("Time Between Techniques (Seconds)")) {
+            Section(header: Text("Set Time Between Techniques")) {
                 HStack {
                     Text("Time (seconds):")
                     Spacer()
                     TextField("Seconds", value: $session.timeBetweenTechniques, formatter: NumberFormatter())
                         .keyboardType(.numberPad)
-                        .frame(width: 60)
+                        .frame(width: 50)
                         .multilineTextAlignment(.trailing)
                 }
             }
 
-            Section(header: Text("Settings")) {
-                Toggle("Randomize Techniques", isOn: $session.randomizeTechniques)
-            }
-
             Section(header: Text("Select Techniques")) {
-                NavigationLink("Select Techniques", destination: SelectTechniquesView(session: $session, allTechniques: $allTechniques))
+                // Pass context to SelectTechniquesView
+                NavigationLink(destination: SelectTechniquesView(session: $session, allTechniques: allTechniques)) {
+                    Text("Edit Techniques")
+                }
             }
 
             Section(header: Text("Select Exercises")) {
-                NavigationLink("Select Exercises", destination: SelectExercisesView(session: $session, allExercises: $allExercises))
+                NavigationLink(destination: SelectExercisesView(session: $session, allExercises: allExercises)) {
+                    Text("Edit Exercises")
+                }
             }
 
             Section(header: Text("Select Katas")) {
-                NavigationLink("Select Katas", destination: SelectKatasView(session: $session, allKatas: $allKatas))
+                NavigationLink(destination: SelectKatasView(session: $session, allKatas: allKatas)) {
+                    Text("Edit Katas")
+                }
             }
         }
         .navigationTitle("Edit Session")
