@@ -14,10 +14,12 @@ class CoreDataHelper {
     // Flags to track if data has already been initialized to avoid redundant fetching
     var isTechniquesFetched: Bool = false
     var isExercisesFetched: Bool = false
+    var isKatasFetched: Bool = false
 
     // Cached data to avoid redundant fetching
     var cachedTechniques: [TechniqueEntity] = []
     var cachedExercises: [ExerciseEntity] = []
+    var cachedKatas: [KataEntity] = []
 
     private init() {}
 
@@ -40,6 +42,15 @@ class CoreDataHelper {
         return newExercise
     }
 
+    // Helper function to create a new KataEntity
+    func createKata(context: NSManagedObjectContext, name: String, timestamp: Date = Date()) -> KataEntity {
+        let newKata = KataEntity(context: context)
+        newKata.id = UUID()  // Assign a new UUID to the id field
+        newKata.name = name
+        newKata.timestamp = timestamp
+        return newKata
+    }
+
     // Fetch all techniques that are marked as selected
     func fetchSelectedTechniques(context: NSManagedObjectContext) -> [TechniqueEntity] {
         let fetchRequest: NSFetchRequest<TechniqueEntity> = TechniqueEntity.fetchRequest()
@@ -53,20 +64,22 @@ class CoreDataHelper {
     
     // Fetch all exercises that are marked as selected
     func fetchSelectedExercises(context: NSManagedObjectContext) -> [ExerciseEntity] {
-        guard !isExercisesFetched else {
-            print("Exercises already fetched, returning cached data.")
-            return cachedExercises
-        }
-
         let fetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
-        // You can add a predicate here for filtering if necessary
-
         do {
-            cachedExercises = try context.fetch(fetchRequest)
-            isExercisesFetched = true // Mark that exercises have been fetched
-            return cachedExercises
+            return try context.fetch(fetchRequest)
         } catch {
             print("Error fetching selected exercises: \(error)")
+            return []
+        }
+    }
+
+    // Fetch all katas that are marked as selected
+    func fetchSelectedKatas(context: NSManagedObjectContext) -> [KataEntity] {
+        let fetchRequest: NSFetchRequest<KataEntity> = KataEntity.fetchRequest()
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            print("Error fetching selected katas: \(error)")
             return []
         }
     }
@@ -84,5 +97,20 @@ class CoreDataHelper {
         }
         
         print("Initializing selected techniques from session: \(techniquesDictionary)")
+    }
+
+    // Initialize selected katas with a guard to prevent redundant initialization
+    func initializeSelectedKatas(context: NSManagedObjectContext) {
+        let selectedKatas = fetchSelectedKatas(context: context)
+
+        // Convert the fetched katas into the expected format (e.g., a dictionary or array)
+        var katasDictionary: [String: Bool] = [:]
+        for kata in selectedKatas {
+            if let kataName = kata.name {
+                katasDictionary[kataName] = true
+            }
+        }
+
+        print("Initializing selected katas from session: \(katasDictionary)")
     }
 }
