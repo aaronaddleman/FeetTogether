@@ -20,6 +20,12 @@ struct TechniquesView: View {
             }
         }
         .navigationTitle("Techniques")
+        .onAppear {
+            print("TechniquesView appeared with \(techniques.count) techniques")
+        }
+        .onDisappear {
+            print("TechniquesView disappeared")
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -31,16 +37,16 @@ struct TechniquesView: View {
         }
         .sheet(isPresented: $showingAddTechnique) {
             AddTechniqueView(techniques: Binding(get: {
-                // Convert `Technique` array to `AnyTrainingItem` array for AddTechniqueView
+                // Return techniques as `AnyTrainingItem` array for AddTechniqueView
                 techniques.map { AnyTrainingItem(id: $0.id, name: $0.name, category: $0.category) }
-            }, set: { newTechniques in
-                // Convert `AnyTrainingItem` array back to `Technique` array after adding a new one
-                techniques = newTechniques.map { Technique(id: $0.id, name: $0.name, category: $0.category) }
+            }, set: { newTrainingItems in
+                // Convert `AnyTrainingItem` array back to `Technique` after adding a new one
+                techniques = newTrainingItems.map { Technique(id: $0.id, name: $0.name, category: $0.category) }
+                print("New technique added. Total techniques: \(techniques.count)")
             }))
         }
     }
 }
-
 
 struct EditTechniqueView: View {
     @Binding var technique: Technique
@@ -53,5 +59,11 @@ struct EditTechniqueView: View {
             }
         }
         .navigationTitle("Edit Technique")
+        .onAppear {
+            print("EditTechniqueView appeared for technique: \(technique.name)")
+        }
+        .onDisappear {
+            print("EditTechniqueView disappeared for technique: \(technique.name)")
+        }
     }
 }

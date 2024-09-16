@@ -8,6 +8,7 @@ struct StartTrainingView: View {
     @State private var isSessionComplete = false
     @State private var countdownSeconds = 0
     @State private var countdownActive = false
+    @State private var isSessionStarted = false // Flag to prevent redundant session initialization
     @State private var cancellable: AnyCancellable? = nil
     @State private var session: TrainingSession  // Use @State to allow modifications
     private let speechSynthesizer = AVSpeechSynthesizer()  // Add text-to-speech support
@@ -47,6 +48,8 @@ struct StartTrainingView: View {
             }
         }
         .onAppear {
+            guard !isSessionStarted else { return }  // Prevent redundant session start
+            isSessionStarted = true
             startSession()
         }
         .onDisappear {
@@ -56,9 +59,9 @@ struct StartTrainingView: View {
 
     // Start the session and begin the countdown for the first item
     private func startSession() {
-        // No need to filter; we assume session.sections already contains only selected items.
         currentSectionIndex = 0
         currentItemIndex = 0
+        isSessionComplete = false
         startCurrentItem()
     }
 
@@ -116,6 +119,7 @@ struct StartTrainingView: View {
     // Restart the session
     private func restartSession() {
         isSessionComplete = false
+        isSessionStarted = false // Reset session start flag
         startSession()
     }
 

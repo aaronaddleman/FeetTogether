@@ -23,15 +23,15 @@ struct SelectTechniquesView: View {
                     Spacer()
                     Toggle(isOn: Binding<Bool>(
                         get: {
-                            let idString = technique.id.uuidString  // Convert UUID to String
-                            let isSelected = selectedTechniques[idString] ?? false
-                            print("Technique \(technique.name) is selected: \(isSelected)")
-                            return isSelected
+                            let idString = technique.id.uuidString
+                            return selectedTechniques[idString] ?? false
                         },
                         set: { newValue in
-                            let idString = technique.id.uuidString  // Convert UUID to String
-                            print("Toggling \(technique.name) to \(newValue)")
+                            let idString = technique.id.uuidString
+                            print("Toggling technique \(technique.name) to \(newValue)")
                             selectedTechniques[idString] = newValue
+                            // Save the toggle state immediately
+                            saveTechniqueSelection(id: idString, isSelected: newValue, context: context)
                         }
                     )) {
                         Text("")
@@ -55,45 +55,55 @@ struct SelectTechniquesView: View {
     // Load selected techniques from Core Data and merge with session
     private func loadSelectedTechniques(context: NSManagedObjectContext) {
         // Fetch selected techniques from Core Data
-        let fetchedSelectedTechniques = fetchSelectedTechniques(context: context)
-        
+        let fetchedSelectedTechniques = CoreDataHelper.shared.fetchSelectedTechniques(context: context)
+
         // Convert fetched techniques to a dictionary
         var techniquesDictionary: [String: Bool] = [:]
         for technique in fetchedSelectedTechniques {
             if let id = technique.id?.uuidString {
                 techniquesDictionary[id] = technique.isSelected
-                print("Loaded technique from Core Data: \(technique.name ?? "Unknown Name") isSelected: \(technique.isSelected)")
             }
         }
 
-        // Merge the Core Data fetched state with the session state
-        let initialSelectedTechniques = session.selectedTechniques
-        for (uuid, selected) in initialSelectedTechniques {
-            let uuidString = uuid.uuidString
-            techniquesDictionary[uuidString] = selected
-            print("Merging technique from session: \(uuidString) isSelected: \(selected)")
+        // Merge with session's selected techniques
+        let sessionTechniques = session.selectedTechniques
+        for (uuid, selected) in sessionTechniques {
+            techniquesDictionary[uuid.uuidString] = selected
         }
-
-        print("Final merged state of selected techniques: \(techniquesDictionary)")
         
-        // Initialize selected techniques with the merged state
+        // Assign the merged result to selectedTechniques
         selectedTechniques = techniquesDictionary
     }
 
-    // Save selected techniques
+    // Save selected techniques immediately when toggled
+    private func saveTechniqueSelection(id: String, isSelected: Bool, context: NSManagedObjectContext) {
+        if let techniqueUUID = UUID(uuidString: id), let existingTechnique = fetchTechniqueEntity(by: techniqueUUID, context: context) {
+            existingTechnique.isSelected = isSelected
+        } else if let techniqueUUID = UUID(uuidString: id) {
+            let newTechniqueEntity = TechniqueEntity(context: context)
+            newTechniqueEntity.id = techniqueUUID
+            newTechniqueEntity.isSelected = isSelected
+        }
+
+        // Save Core Data
+        do {
+            try context.save()
+            print("Saved \(id) selection: \(isSelected) to Core Data")
+        } catch {
+            print("Error saving technique \(id) selection: \(error)")
+        }
+    }
+
+    // Save selected techniques for all toggled changes onDisappear (backup)
     private func saveSelectedTechniques(context: NSManagedObjectContext) {
-        // First convert the selected techniques from [String: Bool] to [UUID: Bool]
         var selectedTechniquesUUID: [UUID: Bool] = [:]
         
-        for (techniqueIDString, isSelected) in selectedTechniques {
-            if let techniqueUUID = UUID(uuidString: techniqueIDString) {
+        for (idString, isSelected) in selectedTechniques {
+            if let techniqueUUID = UUID(uuidString: idString) {
                 selectedTechniquesUUID[techniqueUUID] = isSelected
-            } else {
-                print("Invalid UUID for techniqueIDString: \(techniqueIDString)")
             }
         }
 
-        // Save to Core Data after conversion
         for (techniqueUUID, isSelected) in selectedTechniquesUUID {
             if let existingTechnique = fetchTechniqueEntity(by: techniqueUUID, context: context) {
                 existingTechnique.isSelected = isSelected
@@ -104,17 +114,15 @@ struct SelectTechniquesView: View {
             }
         }
 
-        // Save the Core Data context to persist changes
+        // Save Core Data
         do {
             try context.save()
-            print("Core Data context saved successfully.")
         } catch {
-            print("Failed to save techniques in Core Data: \(error)")
+            print("Error saving selected techniques: \(error)")
         }
 
-        // Update the session's selectedTechniques with the updated [UUID: Bool]
+        // Update the session object
         session.selectedTechniques = selectedTechniquesUUID
-        print("Session's selectedTechniques updated: \(session.selectedTechniques)")
     }
 
     // Fetch TechniqueEntity by id

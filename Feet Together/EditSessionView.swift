@@ -12,9 +12,10 @@ struct EditSessionView: View {
     @Binding var allTechniques: [Technique]
     @Binding var allExercises: [Exercise]
     @Binding var allKatas: [Kata]
-    
-    // Access the Core Data context from the environment
+
     @Environment(\.managedObjectContext) private var context
+    
+    @State private var isDataInitialized = false // Flag to ensure initialization happens once
 
     var body: some View {
         Form {
@@ -34,7 +35,6 @@ struct EditSessionView: View {
             }
 
             Section(header: Text("Select Techniques")) {
-                // Pass context to SelectTechniquesView
                 NavigationLink(destination: SelectTechniquesView(session: $session, allTechniques: allTechniques)) {
                     Text("Edit Techniques")
                 }
@@ -53,5 +53,17 @@ struct EditSessionView: View {
             }
         }
         .navigationTitle("Edit Session")
+        .onAppear {
+            guard !isDataInitialized else { return }  // Ensure initialization happens only once
+            isDataInitialized = true
+            initializeData()
+        }
+    }
+
+    // Function to initialize data
+    private func initializeData() {
+        // Fetch or process data here, e.g., populate techniques, exercises, katas
+        // If allTechniques, allExercises, allKatas require data from CoreData or an API, fetch them here.
+        print("Data initialized")
     }
 }

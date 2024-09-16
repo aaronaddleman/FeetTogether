@@ -24,15 +24,18 @@ struct Feet_TogetherApp: App {
 
     // Core Data persistent container
     let persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "FeetTogetherModel") // Replace with your model name
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+        let container = NSPersistentContainer(name: "FeetTogetherModel")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        container.loadPersistentStores { (description, error) in
+            if let error = error {
+                fatalError("Failed to load Core Data stack: \(error)")
             }
         }
         return container
     }()
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView(

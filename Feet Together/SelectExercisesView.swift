@@ -33,7 +33,7 @@ struct SelectExercisesView: View {
                     Toggle(isOn: Binding<Bool>(
                         get: {
                             let isSelected = selectedExercises[exercise.id] ?? false
-                            print("Exercise \(exercise.name) is selected: \(isSelected)")
+                            //print("Exercise \(exercise.name) is selected: \(isSelected)")
                             return isSelected
                         },
                         set: { newValue in

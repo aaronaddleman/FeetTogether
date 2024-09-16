@@ -15,7 +15,7 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
         for _ in 0..<10 {
             // Correctly pass 'name' and 'category' to the helper function
-            _ = createTechnique(context: viewContext, name: "Sample Technique", category: "Sample Category")
+            _ = CoreDataHelper.shared.createTechnique(context: viewContext, name: "Sample Technique", category: "Sample Category")
         }
         do {
             try viewContext.save()
