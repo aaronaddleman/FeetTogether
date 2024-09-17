@@ -6,64 +6,66 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TechniquesView: View {
-    @Binding var techniques: [Technique]
-    @State private var showingAddTechnique = false  // Control the sheet presentation
+    @Environment(\.managedObjectContext) private var context
+    @FetchRequest(
+        entity: TechniqueEntity.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \TechniqueEntity.name, ascending: true)]
+    ) private var allTechniques: FetchedResults<TechniqueEntity>
+
+    @State private var selectedTechnique: TechniqueEntity?
 
     var body: some View {
-        List {
-            ForEach($techniques) { $technique in
-                NavigationLink(destination: EditTechniqueView(technique: $technique)) {
-                    Text(technique.name)
+        NavigationView {
+            List {
+                ForEach(allTechniques, id: \.self) { technique in
+                    NavigationLink(
+                        destination: EditTechniqueView(technique: Binding($selectedTechnique, technique)),
+                        tag: technique,
+                        selection: $selectedTechnique
+                    ) {
+                        Text(technique.name ?? "Unnamed Technique")
+                    }
                 }
+                .onDelete(perform: deleteTechnique)
             }
-        }
-        .navigationTitle("Techniques")
-        .onAppear {
-            print("TechniquesView appeared with \(techniques.count) techniques")
-        }
-        .onDisappear {
-            print("TechniquesView disappeared")
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    showingAddTechnique.toggle()  // Present the add technique view
-                }) {
-                    Image(systemName: "plus")
-                }
-            }
-        }
-        .sheet(isPresented: $showingAddTechnique) {
-            AddTechniqueView(techniques: Binding(get: {
-                // Return techniques as `AnyTrainingItem` array for AddTechniqueView
-                techniques.map { AnyTrainingItem(id: $0.id, name: $0.name, category: $0.category) }
-            }, set: { newTrainingItems in
-                // Convert `AnyTrainingItem` array back to `Technique` after adding a new one
-                techniques = newTrainingItems.map { Technique(id: $0.id, name: $0.name, category: $0.category) }
-                print("New technique added. Total techniques: \(techniques.count)")
-            }))
+            .navigationTitle("Techniques")
+            .navigationBarItems(trailing: Button(action: {
+                addNewTechnique()
+            }) {
+                Image(systemName: "plus")
+            })
         }
     }
-}
 
-struct EditTechniqueView: View {
-    @Binding var technique: Technique
+    // Add a new technique
+    private func addNewTechnique() {
+        let newTechnique = TechniqueEntity(context: context)
+        newTechnique.id = UUID()  // Ensure unique identifier
+        newTechnique.name = "New Technique"  // Set default name
+        newTechnique.category = "General"  // Set default category
 
-    var body: some View {
-        Form {
-            Section(header: Text("Edit Technique")) {
-                TextField("Technique Name", text: $technique.name)
-                TextField("Category", text: $technique.category)
-            }
+        // Save the new technique to Core Data
+        do {
+            try context.save()
+            print("Successfully added new technique.")
+        } catch {
+            print("Failed to add new technique: \(error)")
         }
-        .navigationTitle("Edit Technique")
-        .onAppear {
-            print("EditTechniqueView appeared for technique: \(technique.name)")
-        }
-        .onDisappear {
-            print("EditTechniqueView disappeared for technique: \(technique.name)")
+    }
+
+    // Delete a technique from Core Data
+    private func deleteTechnique(at offsets: IndexSet) {
+        offsets.map { allTechniques[$0] }.forEach(context.delete)
+
+        // Save changes to Core Data
+        do {
+            try context.save()
+            print("Successfully deleted technique.")
+        } catch {
+            print("Failed to delete technique: \(error)")
         }
     }
 }

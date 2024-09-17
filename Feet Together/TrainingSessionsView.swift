@@ -1,121 +1,67 @@
-//
-//  TrainingSessionsView.swift
-//  Feet Together
-//
-//  Created by Aaron Addleman on 9/7/24.
-//
-
 import SwiftUI
-
-// Predefined techniques, exercises, and katas initialization
-let selectedTechniques = [
-    predefinedTechniques[0],  // Kimono Grab
-    predefinedTechniques[1],  // Eagles Beak A
-    predefinedTechniques[2]   // Striking Asp B
-].map { AnyTrainingItem($0) }
-
-let customTechniquesSection = TrainingSection(
-    type: .technique,
-    items: selectedTechniques
-)
-
-let predefinedTrainingSessionWithThreeTechniques = TrainingSession(
-    name: "Custom Session",
-    timeBetweenTechniques: 10,
-    isFeetTogetherEnabled: true,
-    randomizeTechniques: false,
-    sections: [customTechniquesSection]
-)
-
-let techniquesSectionBeginner = TrainingSection(
-    type: SectionType.technique,
-    items: predefinedTechniques.map { AnyTrainingItem($0) }
-)
-
-let exercisesSectionBeginner = TrainingSection(
-    type: SectionType.exercise,
-    items: predefinedExercises.map { AnyTrainingItem($0) }
-)
-
-let katasSectionBeginner = TrainingSection(
-    type: SectionType.kata,
-    items: predefinedKatas.map { AnyTrainingItem($0) }
-)
-
-let techniquesSectionAdvanced = TrainingSection(
-    type: SectionType.technique,
-    items: predefinedTechniques.map { AnyTrainingItem($0) }
-)
-
-let exercisesSectionAdvanced = TrainingSection(
-    type: SectionType.exercise,
-    items: predefinedExercises.map { AnyTrainingItem($0) }
-)
-
-let katasSectionAdvanced = TrainingSection(
-    type: SectionType.kata,
-    items: predefinedKatas.map { AnyTrainingItem($0) }
-)
-
-let predefinedTrainingSessions: [TrainingSession] = [
-    TrainingSession(
-        name: "Test Session",
-        timeBetweenTechniques: 10,
-        isFeetTogetherEnabled: false,
-        randomizeTechniques: false,
-        sections: [customTechniquesSection,
-                   exercisesSectionBeginner,
-                   katasSectionBeginner]
-    ),
-    TrainingSession(
-        name: "Beginner Session",
-        timeBetweenTechniques: 10,
-        isFeetTogetherEnabled: false,
-        randomizeTechniques: false,
-        sections: [techniquesSectionBeginner, exercisesSectionBeginner, katasSectionBeginner]
-    ),
-    TrainingSession(
-        name: "Advanced Session",
-        timeBetweenTechniques: 15,
-        isFeetTogetherEnabled: true,
-        randomizeTechniques: true,
-        sections: [techniquesSectionAdvanced, exercisesSectionAdvanced, katasSectionAdvanced]
-    )
-]
+import CoreData
 
 struct TrainingSessionsView: View {
-    @Binding var trainingSessions: [TrainingSession]
-    @State private var isDataInitialized = false  // Flag to guard initialization
+    @Environment(\.managedObjectContext) private var context
+    @FetchRequest(
+        entity: TrainingSessionEntity.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \TrainingSessionEntity.name, ascending: true)]
+    ) private var savedSessions: FetchedResults<TrainingSessionEntity>  // Fetch data from Core Data
+
+    @State private var allTechniques: [Technique] = []
+    @State private var allExercises: [Exercise] = []
+    @State private var allKatas: [Kata] = []
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(trainingSessions.indices, id: \.self) { index in  // Use indices to access each session
+                ForEach(savedSessions.indices, id: \.self) { index in
+                    // Create a NavigationLink to StartTrainingView
                     NavigationLink(
-                        destination: StartTrainingView(session: trainingSessions[index])  // Pass session, no binding needed
+                        destination: StartTrainingView(
+                            sessionEntity: savedSessions[index]  // Pass the Core Data entity directly
+                        )
                     ) {
-                        Text(trainingSessions[index].name)
+                        Text(savedSessions[index].name ?? "Unnamed Session")
                     }
                 }
-                .onDelete { indexSet in
-                    trainingSessions.remove(atOffsets: indexSet)
-                }
+                .onDelete(perform: deleteSession)
             }
             .navigationTitle("Training Sessions")
-        }
-        .onAppear {
-            guard !isDataInitialized else { return }  // Ensure initialization happens only once
-            isDataInitialized = true
-            initializeTrainingSessions()
+            .navigationBarItems(trailing: Button(action: {
+                addNewSession()
+            }) {
+                Image(systemName: "plus")
+            })
         }
     }
 
-    // Function to initialize predefined training sessions if needed
-    private func initializeTrainingSessions() {
-        // If the list of training sessions is empty, populate it with the predefined sessions
-        if trainingSessions.isEmpty {
-            trainingSessions = predefinedTrainingSessions
-            print("Initialized training sessions.")
+    // Add a new session (empty session)
+    private func addNewSession() {
+        let newSession = TrainingSessionEntity(context: context)
+        newSession.id = UUID()  // Ensure a unique identifier is set
+        newSession.name = "New Session"
+        newSession.timeBetweenTechniques = 10
+
+        // Save the new session to Core Data
+        do {
+            try context.save()
+            print("Successfully added new session.")
+        } catch {
+            print("Failed to add new session: \(error)")
+        }
+    }
+
+    // Delete a session from Core Data
+    private func deleteSession(at offsets: IndexSet) {
+        offsets.map { savedSessions[$0] }.forEach(context.delete)
+
+        // Save changes to Core Data
+        do {
+            try context.save()
+            print("Successfully deleted session.")
+        } catch {
+            print("Failed to delete session: \(error)")
         }
     }
 }

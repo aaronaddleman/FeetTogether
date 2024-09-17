@@ -11,27 +11,29 @@ import CoreData
 struct SelectTechniquesView: View {
     @Binding var session: TrainingSession
     var allTechniques: [Technique]
-    
+
     @Environment(\.managedObjectContext) private var context
-    @State var selectedTechniques: [String: Bool] = [:]  // Holds UUIDs as strings for the technique selection
+    @State var selectedTechniques: [UUID: Bool] = [:]  // Holds UUIDs for the technique selection
+    @State private var isSaving = false  // Flag to control saving
+    @State private var isViewActive = true  // Ensure view stays active
 
     var body: some View {
         List {
+            // Display all techniques, whether selected or not
             ForEach(allTechniques) { technique in
                 HStack {
-                    Text(technique.name)
+                    Text(technique.name.isEmpty ? "Unknown Technique" : technique.name)
                     Spacer()
                     Toggle(isOn: Binding<Bool>(
                         get: {
-                            let idString = technique.id.uuidString
-                            return selectedTechniques[idString] ?? false
+                            // Default to false if the technique isn't already in selectedTechniques
+                            selectedTechniques[technique.id] ?? session.selectedTechniques[technique.id] ?? false
                         },
                         set: { newValue in
-                            let idString = technique.id.uuidString
-                            print("Toggling technique \(technique.name) to \(newValue)")
-                            selectedTechniques[idString] = newValue
-                            // Save the toggle state immediately
-                            saveTechniqueSelection(id: idString, isSelected: newValue, context: context)
+                            selectedTechniques[technique.id] = newValue
+                            session.selectedTechniques[technique.id] = newValue  // Update the session's selected techniques
+                            saveTechniqueSelection(technique: technique, isSelected: newValue)
+                            print("Toggled technique: \(technique.name), New Value: \(newValue)")
                         }
                     )) {
                         Text("")
@@ -42,100 +44,83 @@ struct SelectTechniquesView: View {
         }
         .navigationTitle("Select Techniques")
         .onAppear {
-            loadSelectedTechniques(context: context)
+            print("SelectTechniquesView appeared")
+            loadSelectedTechniques()
+            logTechniqueCounts()
         }
         .onDisappear {
-            print("onDisappear called: Saving selected techniques...")
-            print("Selected techniques before save: \(selectedTechniques)")
-            saveSelectedTechniques(context: context)
-            print("Selected techniques after save: \(selectedTechniques)")
+            print("SelectTechniquesView disappeared")
+            saveSelectedTechniques()
+            print("Saving all selected techniques...")
         }
     }
 
-    // Load selected techniques from Core Data and merge with session
-    private func loadSelectedTechniques(context: NSManagedObjectContext) {
-        // Fetch selected techniques from Core Data
-        let fetchedSelectedTechniques = CoreDataHelper.shared.fetchSelectedTechniques(context: context)
-
-        // Convert fetched techniques to a dictionary
-        var techniquesDictionary: [String: Bool] = [:]
-        for technique in fetchedSelectedTechniques {
-            if let id = technique.id?.uuidString {
-                techniquesDictionary[id] = technique.isSelected
-            }
-        }
-
-        // Merge with session's selected techniques
-        let sessionTechniques = session.selectedTechniques
-        for (uuid, selected) in sessionTechniques {
-            techniquesDictionary[uuid.uuidString] = selected
-        }
-        
-        // Assign the merged result to selectedTechniques
-        selectedTechniques = techniquesDictionary
+    // Load selected techniques for the current session
+    private func loadSelectedTechniques() {
+        print("Loaded \(session.selectedTechniques.count) selected techniques.")
+        selectedTechniques = session.selectedTechniques
     }
 
-    // Save selected techniques immediately when toggled
-    private func saveTechniqueSelection(id: String, isSelected: Bool, context: NSManagedObjectContext) {
-        if let techniqueUUID = UUID(uuidString: id), let existingTechnique = fetchTechniqueEntity(by: techniqueUUID, context: context) {
-            existingTechnique.isSelected = isSelected
-        } else if let techniqueUUID = UUID(uuidString: id) {
-            let newTechniqueEntity = TechniqueEntity(context: context)
-            newTechniqueEntity.id = techniqueUUID
-            newTechniqueEntity.isSelected = isSelected
-        }
+    // Save individual technique selection
+    private func saveTechniqueSelection(technique: Technique, isSelected: Bool) {
+        session.selectedTechniques[technique.id] = isSelected
+        print("Saved technique selection for \(technique.name): \(isSelected)")
 
-        // Save Core Data
-        do {
-            try context.save()
-            print("Saved \(id) selection: \(isSelected) to Core Data")
-        } catch {
-            print("Error saving technique \(id) selection: \(error)")
-        }
-    }
-
-    // Save selected techniques for all toggled changes onDisappear (backup)
-    private func saveSelectedTechniques(context: NSManagedObjectContext) {
-        var selectedTechniquesUUID: [UUID: Bool] = [:]
-        
-        for (idString, isSelected) in selectedTechniques {
-            if let techniqueUUID = UUID(uuidString: idString) {
-                selectedTechniquesUUID[techniqueUUID] = isSelected
-            }
-        }
-
-        for (techniqueUUID, isSelected) in selectedTechniquesUUID {
-            if let existingTechnique = fetchTechniqueEntity(by: techniqueUUID, context: context) {
+        isSaving = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            if let existingTechnique = fetchTechniqueEntity(by: technique.id, context: context) {
                 existingTechnique.isSelected = isSelected
             } else {
                 let newTechniqueEntity = TechniqueEntity(context: context)
-                newTechniqueEntity.id = techniqueUUID
+                newTechniqueEntity.id = technique.id
+                newTechniqueEntity.isSelected = isSelected
+            }
+
+            do {
+                try context.save()
+                print("Saved \(technique.name) to Core Data.")
+            } catch {
+                print("Failed to save technique to Core Data: \(error)")
+            }
+
+            isSaving = false
+        }
+    }
+
+    // Save all selected techniques onDisappear
+    private func saveSelectedTechniques() {
+        for (id, isSelected) in selectedTechniques {
+            if let techniqueEntity = fetchTechniqueEntity(by: id, context: context) {
+                techniqueEntity.isSelected = isSelected
+            } else {
+                let newTechniqueEntity = TechniqueEntity(context: context)
+                newTechniqueEntity.id = id
                 newTechniqueEntity.isSelected = isSelected
             }
         }
 
-        // Save Core Data
         do {
             try context.save()
+            print("Successfully saved all selected techniques to Core Data.")
         } catch {
-            print("Error saving selected techniques: \(error)")
+            print("Failed to save selected techniques: \(error)")
         }
-
-        // Update the session object
-        session.selectedTechniques = selectedTechniquesUUID
     }
 
     // Fetch TechniqueEntity by id
-    func fetchTechniqueEntity(by id: UUID, context: NSManagedObjectContext) -> TechniqueEntity? {
-        let fetchRequest: NSFetchRequest<TechniqueEntity> = TechniqueEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        
-        do {
-            let results = try context.fetch(fetchRequest)
-            return results.first
-        } catch {
-            print("Error fetching TechniqueEntity by id: \(error)")
-            return nil
-        }
+    private func fetchTechniqueEntity(by id: UUID, context: NSManagedObjectContext) -> TechniqueEntity? {
+        let request: NSFetchRequest<TechniqueEntity> = TechniqueEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+
+        return try? context.fetch(request).first
+    }
+
+    // Log counts of techniques
+    private func logTechniqueCounts() {
+        let availableTechniquesCount = allTechniques.count
+        let selectedTechniquesCount = session.selectedTechniques.filter { $0.value == true }.count
+
+        print("Total available techniques: \(availableTechniquesCount)")
+        print("Total selected techniques: \(selectedTechniquesCount)")
     }
 }

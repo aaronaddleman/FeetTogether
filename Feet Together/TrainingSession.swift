@@ -24,3 +24,4 @@ struct TrainingSession: Identifiable, Equatable {
         return lhs.id == rhs.id
     }
 }
+

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="ExerciseEntity" representedClassName="ExerciseEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="reps" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyExercises" inverseEntity="TrainingSessionEntity"/>
+        <relationship name="trainingSessions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="selectedExercises" inverseEntity="TrainingSessionEntity"/>
     </entity>
     <entity name="KataEntity" representedClassName="KataEntity" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyKatas" inverseEntity="TrainingSessionEntity"/>
+        <relationship name="trainingSessions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="selectedKatas" inverseEntity="TrainingSessionEntity"/>
     </entity>
     <entity name="TechniqueEntity" representedClassName="TechniqueEntity" syncable="YES" codeGenerationType="class">
         <attribute name="category" optional="YES" attributeType="String"/>
@@ -21,18 +22,35 @@
         <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="toManyTechniques" inverseEntity="TrainingSessionEntity"/>
+        <relationship name="trainingSessions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="selectedTechniques" inverseEntity="TrainingSessionEntity"/>
+    </entity>
+    <entity name="TrainingItemEntity" representedClassName="TrainingItemEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="TrainingSectionEntity" representedClassName="TrainingSectionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrainingItemEntity"/>
+        <relationship name="trainingSession" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingSessionEntity" inverseName="sections" inverseEntity="TrainingSessionEntity"/>
     </entity>
     <entity name="TrainingSessionEntity" representedClassName="TrainingSessionEntity" syncable="YES" codeGenerationType="class">
         <attribute name="countdownEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isFeetTogetherEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="randomizeTechniques" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sessionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="timeBetweenTechniques" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="toManyExercises" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="session" inverseEntity="ExerciseEntity"/>
-        <relationship name="toManyKatas" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="KataEntity" inverseName="session" inverseEntity="KataEntity"/>
-        <relationship name="toManyTechniques" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TechniqueEntity" inverseName="session" inverseEntity="TechniqueEntity"/>
+        <relationship name="sections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrainingSectionEntity" inverseName="trainingSession" inverseEntity="TrainingSectionEntity"/>
+        <relationship name="selectedExercises" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="trainingSessions" inverseEntity="ExerciseEntity"/>
+        <relationship name="selectedKatas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="KataEntity" inverseName="trainingSessions" inverseEntity="KataEntity"/>
+        <relationship name="selectedTechniques" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TechniqueEntity" inverseName="trainingSessions" inverseEntity="TechniqueEntity"/>
     </entity>
     <entity name="UserSettingsEntity" representedClassName="UserSettingsEntity" syncable="YES" codeGenerationType="class">
         <attribute name="preferredDuration" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>

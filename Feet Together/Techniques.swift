@@ -53,3 +53,4 @@ let predefinedTechniques = [
     Technique(name: "Headlock A and B", category: "White"),
     Technique(name: "Headlock C", category: "White"),
 ]
+

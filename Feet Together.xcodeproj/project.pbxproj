@@ -19,6 +19,8 @@
 		9324E7A92C95527F00E3959A /* SelectTechniquesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */; };
 		9324E7AB2C955BEA00E3959A /* SelectExercisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7AA2C955BEA00E3959A /* SelectExercisesView.swift */; };
 		9324E7AD2C955BFC00E3959A /* SelectKatasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */; };
+		935FEF5F2C98A1A0009A4F2D /* SelectTrainingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935FEF5E2C98A1A0009A4F2D /* SelectTrainingSessionView.swift */; };
+		9371F4E22C992C5D0061F5A8 /* EditTechniqueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9371F4E12C992C5D0061F5A8 /* EditTechniqueView.swift */; };
 		937A268A2C97220000515C5E /* FeetTogetherModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2542C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld */; };
 		937A268B2C97AEC200515C5E /* CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937A26882C9639E500515C5E /* CoreDataHelpers.swift */; };
 		93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */; };
@@ -69,6 +71,8 @@
 		9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTechniquesView.swift; sourceTree = "<group>"; };
 		9324E7AA2C955BEA00E3959A /* SelectExercisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectExercisesView.swift; sourceTree = "<group>"; };
 		9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKatasView.swift; sourceTree = "<group>"; };
+		935FEF5E2C98A1A0009A4F2D /* SelectTrainingSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTrainingSessionView.swift; sourceTree = "<group>"; };
+		9371F4E12C992C5D0061F5A8 /* EditTechniqueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTechniqueView.swift; sourceTree = "<group>"; };
 		937A26882C9639E500515C5E /* CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelpers.swift; sourceTree = "<group>"; };
 		93F5F24D2C8D55810031C0B0 /* Feet Together.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Feet Together.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherApp.swift; sourceTree = "<group>"; };
@@ -146,6 +150,7 @@
 				93F5F2522C8D55810031C0B0 /* Persistence.swift */,
 				937A26882C9639E500515C5E /* CoreDataHelpers.swift */,
 				93F5F2572C8D55810031C0B0 /* ContentView.swift */,
+				935FEF5E2C98A1A0009A4F2D /* SelectTrainingSessionView.swift */,
 				9324E79A2C95012600E3959A /* ExercisesView.swift */,
 				9324E79C2C95014100E3959A /* KatasView.swift */,
 				93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */,
@@ -154,6 +159,7 @@
 				9324E7AC2C955BFC00E3959A /* SelectKatasView.swift */,
 				9324E7A82C95527F00E3959A /* SelectTechniquesView.swift */,
 				9324E7A02C95300700E3959A /* EditTechniquesView.swift */,
+				9371F4E12C992C5D0061F5A8 /* EditTechniqueView.swift */,
 				9324E7A62C954DAF00E3959A /* AddTechniqueView.swift */,
 				9324E7A22C95301E00E3959A /* EditExerciseView.swift */,
 				9324E7A42C95304C00E3959A /* EditKatasView.swift */,
@@ -339,8 +345,10 @@
 				9324E79D2C95014100E3959A /* KatasView.swift in Sources */,
 				9324E7A92C95527F00E3959A /* SelectTechniquesView.swift in Sources */,
 				937A268A2C97220000515C5E /* FeetTogetherModel.xcdatamodeld in Sources */,
+				935FEF5F2C98A1A0009A4F2D /* SelectTrainingSessionView.swift in Sources */,
 				93F5F28D2C8D58EB0031C0B0 /* EditSessionView.swift in Sources */,
 				93F5F28B2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift in Sources */,
+				9371F4E22C992C5D0061F5A8 /* EditTechniqueView.swift in Sources */,
 				93F5F2812C8D57E80031C0B0 /* TrainingSession.swift in Sources */,
 				9324E7992C95001400E3959A /* Kata.swift in Sources */,
 				93F5F2852C8D584B0031C0B0 /* TrainingSessionsView.swift in Sources */,

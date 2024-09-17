@@ -113,4 +113,56 @@ class CoreDataHelper {
 
         print("Initializing selected katas from session: \(katasDictionary)")
     }
+    // Add this to CoreDataHelper.swift
+    func fetchTrainingSessions(context: NSManagedObjectContext) -> [TrainingSession] {
+        let fetchRequest: NSFetchRequest<TrainingSessionEntity> = TrainingSessionEntity.fetchRequest()
+
+        do {
+            let fetchedSessions = try context.fetch(fetchRequest)
+            return fetchedSessions.map { sessionEntity in
+                return convertEntityToTrainingSession(sessionEntity)
+            }
+        } catch {
+            print("Error fetching training sessions: \(error)")
+            return []
+        }
+    }
+
+    // Helper function to convert a Core Data entity to TrainingSession
+    private func convertEntityToTrainingSession(_ entity: TrainingSessionEntity) -> TrainingSession {
+        let sections = entity.sections?.compactMap { sectionEntity in
+            convertSectionEntityToTrainingSection(sectionEntity as! TrainingSectionEntity)
+        } ?? []
+
+        return TrainingSession(
+            name: entity.name ?? "Unknown",
+            timeBetweenTechniques: Int(entity.timeBetweenTechniques),
+            isFeetTogetherEnabled: entity.isFeetTogetherEnabled,
+            randomizeTechniques: entity.randomizeTechniques,
+            sections: sections
+        )
+    }
+
+    // Helper function to convert Core Data section entities into TrainingSection
+    private func convertSectionEntityToTrainingSection(_ entity: TrainingSectionEntity) -> TrainingSection {
+        let items = entity.items?.compactMap { itemEntity in
+            convertItemEntityToAnyTrainingItem(itemEntity as! TrainingItemEntity)
+        } ?? []
+
+        return TrainingSection(
+            id: entity.id ?? UUID(),
+            type: SectionType(rawValue: entity.type ?? "Unknown") ?? .technique,
+            items: items
+        )
+    }
+
+    // Helper function to convert Core Data training item entities into AnyTrainingItem
+    private func convertItemEntityToAnyTrainingItem(_ entity: TrainingItemEntity) -> AnyTrainingItem {
+        return AnyTrainingItem(
+            id: entity.id ?? UUID(),
+            name: entity.name ?? "Unknown",
+            category: entity.category ?? "Unknown"
+        )
+    }
+
 }

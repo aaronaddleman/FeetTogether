@@ -29,7 +29,8 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "Feet_Together")
+        // Updated model name to match your Core Data model file
+        container = NSPersistentContainer(name: "FeetTogetherModel")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
