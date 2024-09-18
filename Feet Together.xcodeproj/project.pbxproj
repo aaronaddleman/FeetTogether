@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9371F4E42C993B6E0061F5A8 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9371F4E32C993B6E0061F5A8 /* Exercise.swift */; };
+		9371F4E62C993B910061F5A8 /* Kata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9371F4E52C993B910061F5A8 /* Kata.swift */; };
+		9371F4E82C9943DC0061F5A8 /* SelectTrainingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9371F4E72C9943DC0061F5A8 /* SelectTrainingSessionView.swift */; };
 		93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */; };
 		93F5F2532C8D55810031C0B0 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2522C8D55810031C0B0 /* Persistence.swift */; };
-		93F5F2562C8D55810031C0B0 /* Feet_Together.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2542C8D55810031C0B0 /* Feet_Together.xcdatamodeld */; };
+		93F5F2562C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2542C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld */; };
 		93F5F2582C8D55810031C0B0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2572C8D55810031C0B0 /* ContentView.swift */; };
 		93F5F25A2C8D55820031C0B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93F5F2592C8D55820031C0B0 /* Assets.xcassets */; };
 		93F5F25E2C8D55820031C0B0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93F5F25D2C8D55820031C0B0 /* Preview Assets.xcassets */; };
@@ -17,7 +20,7 @@
 		93F5F2722C8D55820031C0B0 /* Feet_TogetherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2712C8D55820031C0B0 /* Feet_TogetherUITests.swift */; };
 		93F5F2742C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2732C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift */; };
 		93F5F2812C8D57E80031C0B0 /* TrainingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */; };
-		93F5F2832C8D58100031C0B0 /* Techniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2822C8D58100031C0B0 /* Techniques.swift */; };
+		93F5F2832C8D58100031C0B0 /* Technique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2822C8D58100031C0B0 /* Technique.swift */; };
 		93F5F2852C8D584B0031C0B0 /* TrainingSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */; };
 		93F5F2872C8D58750031C0B0 /* StartTrainingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */; };
 		93F5F2892C8D589B0031C0B0 /* iPhoneSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */; };
@@ -44,6 +47,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9371F4E32C993B6E0061F5A8 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
+		9371F4E52C993B910061F5A8 /* Kata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kata.swift; sourceTree = "<group>"; };
+		9371F4E72C9943DC0061F5A8 /* SelectTrainingSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectTrainingSessionView.swift; sourceTree = "<group>"; };
 		93F5F24D2C8D55810031C0B0 /* Feet Together.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Feet Together.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherApp.swift; sourceTree = "<group>"; };
 		93F5F2522C8D55810031C0B0 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -58,7 +64,7 @@
 		93F5F2712C8D55820031C0B0 /* Feet_TogetherUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherUITests.swift; sourceTree = "<group>"; };
 		93F5F2732C8D55820031C0B0 /* Feet_TogetherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feet_TogetherUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingSession.swift; sourceTree = "<group>"; };
-		93F5F2822C8D58100031C0B0 /* Techniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Techniques.swift; sourceTree = "<group>"; };
+		93F5F2822C8D58100031C0B0 /* Technique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Technique.swift; sourceTree = "<group>"; };
 		93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingSessionsView.swift; sourceTree = "<group>"; };
 		93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTrainingView.swift; sourceTree = "<group>"; };
 		93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneSessionManager.swift; sourceTree = "<group>"; };
@@ -92,6 +98,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9371F4E92C9A95080061F5A8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9371F4E52C993B910061F5A8 /* Kata.swift */,
+				9371F4E32C993B6E0061F5A8 /* Exercise.swift */,
+				93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */,
+				93F5F2822C8D58100031C0B0 /* Technique.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9371F4EA2C9A95160061F5A8 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				93F5F2542C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld */,
+				93F5F2522C8D55810031C0B0 /* Persistence.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		9371F4EB2C9A95250061F5A8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9371F4E72C9943DC0061F5A8 /* SelectTrainingSessionView.swift */,
+				93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */,
+				93F5F2572C8D55810031C0B0 /* ContentView.swift */,
+				93F5F28A2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift */,
+				93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */,
+				93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */,
+				93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9371F4EC2C9A963B0061F5A8 /* AppleWatch */ = {
+			isa = PBXGroup;
+			children = (
+				93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */,
+			);
+			path = AppleWatch;
+			sourceTree = "<group>";
+		};
 		93F5F2442C8D55810031C0B0 = {
 			isa = PBXGroup;
 			children = (
@@ -115,20 +163,13 @@
 		93F5F24F2C8D55810031C0B0 /* Feet Together */ = {
 			isa = PBXGroup;
 			children = (
-				93F5F28A2C8D58C10031C0B0 /* ModifyTrainingSessionsView.swift */,
+				9371F4EC2C9A963B0061F5A8 /* AppleWatch */,
+				9371F4EB2C9A95250061F5A8 /* Views */,
+				9371F4EA2C9A95160061F5A8 /* CoreData */,
+				9371F4E92C9A95080061F5A8 /* Models */,
 				93F5F2502C8D55810031C0B0 /* Feet_TogetherApp.swift */,
-				93F5F2522C8D55810031C0B0 /* Persistence.swift */,
-				93F5F2572C8D55810031C0B0 /* ContentView.swift */,
-				93F5F28E2C8D591E0031C0B0 /* TechniquesView.swift */,
-				93F5F28C2C8D58EB0031C0B0 /* EditSessionView.swift */,
-				93F5F2842C8D584B0031C0B0 /* TrainingSessionsView.swift */,
-				93F5F2862C8D58750031C0B0 /* StartTrainingView.swift */,
-				93F5F2882C8D589B0031C0B0 /* iPhoneSessionManager.swift */,
-				93F5F2802C8D57E80031C0B0 /* TrainingSession.swift */,
 				93F5F2592C8D55820031C0B0 /* Assets.xcassets */,
-				93F5F2822C8D58100031C0B0 /* Techniques.swift */,
 				93F5F25B2C8D55820031C0B0 /* Feet_Together.entitlements */,
-				93F5F2542C8D55810031C0B0 /* Feet_Together.xcdatamodeld */,
 				93F5F25C2C8D55820031C0B0 /* Preview Content */,
 			);
 			path = "Feet Together";
@@ -289,8 +330,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93F5F2832C8D58100031C0B0 /* Techniques.swift in Sources */,
-				93F5F2562C8D55810031C0B0 /* Feet_Together.xcdatamodeld in Sources */,
+				9371F4E62C993B910061F5A8 /* Kata.swift in Sources */,
+				93F5F2832C8D58100031C0B0 /* Technique.swift in Sources */,
+				93F5F2562C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld in Sources */,
 				93F5F2512C8D55810031C0B0 /* Feet_TogetherApp.swift in Sources */,
 				93F5F2582C8D55810031C0B0 /* ContentView.swift in Sources */,
 				93F5F28D2C8D58EB0031C0B0 /* EditSessionView.swift in Sources */,
@@ -299,8 +341,10 @@
 				93F5F2852C8D584B0031C0B0 /* TrainingSessionsView.swift in Sources */,
 				93F5F2892C8D589B0031C0B0 /* iPhoneSessionManager.swift in Sources */,
 				93F5F2532C8D55810031C0B0 /* Persistence.swift in Sources */,
+				9371F4E82C9943DC0061F5A8 /* SelectTrainingSessionView.swift in Sources */,
 				93F5F2872C8D58750031C0B0 /* StartTrainingView.swift in Sources */,
 				93F5F28F2C8D591E0031C0B0 /* TechniquesView.swift in Sources */,
+				9371F4E42C993B6E0061F5A8 /* Exercise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -659,13 +703,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		93F5F2542C8D55810031C0B0 /* Feet_Together.xcdatamodeld */ = {
+		93F5F2542C8D55810031C0B0 /* FeetTogetherModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				93F5F2552C8D55810031C0B0 /* Feet_Together.xcdatamodel */,
 			);
 			currentVersion = 93F5F2552C8D55810031C0B0 /* Feet_Together.xcdatamodel */;
-			path = Feet_Together.xcdatamodeld;
+			path = FeetTogetherModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

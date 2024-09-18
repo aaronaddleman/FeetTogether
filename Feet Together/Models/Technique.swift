@@ -1,5 +1,5 @@
 //
-//  Techniques.swift
+//  Technique.swift
 //  Feet Together
 //
 //  Created by Aaron Addleman on 9/7/24.
@@ -7,14 +7,22 @@
 
 import Foundation
 
-struct Technique: Identifiable, Equatable {
+struct Technique: Identifiable, Hashable {
     var id = UUID()
     var name: String
-    var category: String
-    
-    // Manually conform to Equatable
-    static func == (lhs: Technique, rhs: Technique) -> Bool {
-        return lhs.id == rhs.id && lhs.name == rhs.name
+    var category: String = "General"
+
+    // Initializer to convert Core Data object to Swift model
+    init(from entity: TechniqueEntity) {
+        self.id = entity.id ?? UUID()
+        self.name = entity.name ?? "Unnamed Technique"
+        self.category = entity.category ?? "General"
+    }
+
+    // Default initializer for manually created techniques
+    init(name: String, category: String) {
+        self.name = name
+        self.category = category
     }
 }
 
