@@ -20,7 +20,7 @@ struct Technique: Identifiable, Hashable {
     }
 
     // Default initializer for manually created techniques
-    init(name: String, category: String) {
+    init(name: String = "Unnamed Technique", category: String = "General") {
         self.name = name
         self.category = category
     }

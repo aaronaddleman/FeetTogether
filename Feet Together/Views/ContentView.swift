@@ -28,6 +28,7 @@ struct ContentView: View {
     
     @State private var trainingSessions: [TrainingSession] = []
     @State private var techniques: [Technique] = []
+    @State private var exercises: [Exercise] = []
 
     var body: some View {
         NavigationView {
@@ -67,7 +68,7 @@ struct ContentView: View {
                 }
 
                 // Navigate to Techniques View
-                NavigationLink(destination: TechniquesView(techniques: $techniques)) {
+                NavigationLink(destination: TechniquesView()) {
                     Text("Techniques")
                         .font(.title2)
                         .padding()
@@ -101,6 +102,7 @@ struct ContentView: View {
             return Exercise(from: entity)
         }
         techniques = techniquesArray
+        exercises = exercisesArray
     }
 
     // Helper function to convert Core Data session to Swift model
